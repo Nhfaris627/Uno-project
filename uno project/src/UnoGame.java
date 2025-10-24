@@ -447,7 +447,9 @@ public class UnoGame {
 
     public void displayResultantState()
     {
-        System.out.println("\n-- RESULTANT STATE --");
+        System.out.println("\n╔════════════════════════════════════╗");
+        System.out.println("║          RESULTANT STATE           ║");
+        System.out.println("╚════════════════════════════════════╝");
 
         // Display current top of discard pile
         Card topCard = getTopDiscardCard();
