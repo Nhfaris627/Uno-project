@@ -30,6 +30,7 @@ public class CardTest {
         assertEquals("BLUE SKIP", card.toString());
     }
 
+    @org.junit.Test
     @Test
     public void testToStringWild() {
         Card card = new Card(Card.Color.WILD, Card.Value.WILD);
