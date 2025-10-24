@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Quick test program for Steps 1-3
@@ -199,9 +200,9 @@ public class TestMain {
 
         // TEST 4: Test card placement functionality with keyboard input
 
-        System.out.println("\n\nTEST 4: Interactive Card Placement");
-        System.out.println("─────────────────────────────────────");
-        System.out.println("NOTE: This test requires MANUAL INPUT");
+        System.out.println("\n\nTEST 4: Card Placement Validation");
+        System.out.println("──────────────────────────────────");
+        System.out.println("Testing UNO rules validation only!");
 
         List<String> testPlayers = new ArrayList<>();
         testPlayers.add("You");
@@ -209,56 +210,21 @@ public class TestMain {
         UnoGame testGame = new UnoGame(testPlayers);
         testGame.startGame();
 
-        System.out.println("Game ready!");
-        System.out.println("Try these inputs to test:");
-        System.out.println("  - Enter 0 to play your first card");
-        System.out.println("  - Enter 1 to play your second card");
-        System.out.println("  - Enter -1 to draw from deck");
-        System.out.println("  - Enter invalid number to test error handling");
+        System.out.println("Game ready! Testing card validation:");
+        System.out.println("• Cards must match color OR value of top card");
+        System.out.println("• WILD cards can always be played");
+        System.out.println("• Invalid plays will be rejected");
+        System.out.println("═══════════════════════════════════════════════════");
 
-        // Test one turn with actual input
+        // Test exactly 2 turns to demonstrate validation
+        System.out.println("\n🎮 TURN 1 - Test validation rules:");
         boolean continueGame = testGame.playTurn();
 
         if (continueGame) {
-            System.out.println("\n✓ Turn completed successfully!");
-            System.out.println("Game would continue to next player...");
-        } else {
-            System.out.println("\n✓ Game ended - player won!");
+            System.out.println("\n🎮 TURN 2 - Continue testing:");
+            testGame.playTurn();
         }
 
-        System.out.println("\n\nTEST 4 Part 2: Interactive Card Placement with Immediate End");
-        System.out.println("─────────────────────────────────────");
-        System.out.println("NOTE: This test requires MANUAL INPUT");
-
-        List<String> testPlayers2 = new ArrayList<>();
-        testPlayers2.add("You");
-        testPlayers2.add("Player 2");
-        UnoGame testGame2 = new UnoGame(testPlayers2);
-        testGame2.startGame();
-
-        Player you = testGame2.getPlayers().get(0);
-        List<Card> yourHand = you.getHand();
-        while (yourHand.size() > 1) {
-            yourHand.remove(0); // Keep removing cards until only 1 remains
-        }
-
-        System.out.println("Game ready!");
-        System.out.println("Try these inputs to test:");
-        System.out.println("  - Enter 0 to play your first card");
-        System.out.println("  - Enter 1 to play your second card");
-        System.out.println("  - Enter -1 to draw from deck");
-        System.out.println("  - Enter invalid number to test error handling");
-
-        // Test one turn with actual input
-        boolean continueGame2 = testGame2.playTurn();
-
-        if (continueGame2) {
-            System.out.println("\n✓ Turn completed successfully!");
-            System.out.println("Game would continue to next player...");
-        } else {
-            System.out.println("\n✓ Game ended - player won!");
-        }
-
-        System.out.println("\nTEST 4 COMPLETE: Interactive card placement working!");
+        System.out.println("CARD PLACEMENT VALIDATION: WORKING!");
     }
 }

@@ -236,15 +236,18 @@ public class UnoGame {
      * Gets valid card choice from player with keyboard inputs
      * @param player Current player
      * @param scanner Scanner for keyboard input
+     * @param playableCards List of playable cards
      * @return index of chosen card, or -1 to draw from deck
      */
-    public int getValidCardChoice(Player player, Scanner scanner) {
+    public int getValidCardChoice(Player player, Scanner scanner, List<Integer> playableCards) {
         int handSize = player.getHandSize();
 
         while(true)
         {
             System.out.println("\nChoose an action:");
-            System.out.println("    Enter card number [0-" + (handSize - 1) + "] to play a card");
+            if (!playableCards.isEmpty()) {
+                System.out.println("    Enter card number [0-" + (handSize - 1) + "] to play a card");
+            }
             System.out.println("Enter -1 to draw from deck");
             System.out.print("Your choice: ");
 
@@ -252,11 +255,20 @@ public class UnoGame {
                 int choice = scanner.nextInt();
 
                 if (choice == -1) {
+                    // Draw from deck
                     return -1;
                 }
 
                 if (choice >= 0 && choice < handSize) {
-                    return choice;
+                    if (playableCards.contains(choice)) {
+                        return choice;
+                    }
+                    else {
+                        Card chosenCard = player.getHand().get(choice);
+                        Card topCard = getTopDiscardCard();
+                        System.out.println("Invalid play! " + chosenCard + " cannot be played on " +
+                                topCard);
+                    }
                 }
                 else
                 {
@@ -273,6 +285,92 @@ public class UnoGame {
     }
 
     /**
+     * Gets a list of indices of playable cards in player's hand
+     * @param player Current player
+     * @return Indices of playable cards
+     */
+    public List<Integer> getPlayableCards(Player player) {
+        List<Integer> playableCards = new ArrayList<>();
+        Card topCard =  getTopDiscardCard();
+
+        if (topCard == null) {
+            // No top card on discard pile, any card can be played
+            for (int i = 0; i < player.getHandSize(); i++) {
+                playableCards.add(i);
+            }
+            return playableCards;
+        }
+
+        for (int i = 0; i < player.getHandSize(); i++) {
+            Card card = player.getHand().get(i);
+            if (isCardPlayable(card)) {
+                playableCards.add(i);
+            }
+        }
+        return playableCards;
+    }
+
+    /**
+     * Checks if card can be played on current discard pile
+     * @param card Card in player's hand
+     * @return true if card is playable, false otherwise
+     */
+    public boolean isCardPlayable(Card card){
+
+        Card topCard =  getTopDiscardCard();
+
+        if (topCard == null) {
+            // No card in discard pile, any card is playable
+            return true;
+        }
+
+        // WILD cards can always be played
+        if (card.getColor() == Card.Color.WILD) {
+            return true;
+        }
+
+        // Same colour cards can be played
+        if (card.getColor() == topCard.getColor()) {
+            return true;
+        }
+
+        // Same value cards can be played
+        if (card.getValue() == topCard.getValue()) {
+            return true;
+        }
+
+        // WILD cards on top of discard pile allow any card to be played
+        if (topCard.getColor() == Card.Color.WILD) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Formats playable cards for display
+     */
+    public String formatPlayableCards(List<Integer> playableCards, Player player) {
+        if (playableCards.isEmpty()) {
+            return "None - you must draw a card";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nPlayable Cards:\n");
+        sb.append("═══════════════════════════════════\n");
+
+        for (int i = 0; i < playableCards.size(); i++) {
+            int cardIndex = playableCards.get(i);
+            sb.append("  [").append(cardIndex).append("] ").append(player.getHand()
+                    .get(cardIndex)).append("\n");
+        }
+
+        sb.append("═══════════════════════════════════\n");
+        sb.append("Total playable: ").append(playableCards.size()).append(" cards");
+        return sb.toString();
+    }
+
+    /**
      * Handle's a player turn - allows them to play a card or draw from deck
      * @return true if game continues, false if game ends
      */
@@ -280,12 +378,24 @@ public class UnoGame {
         Scanner scanner = new Scanner(System.in);
         Player currentPlayer = getCurrentPlayer();
 
+        System.out.println("\n╔════════════════════════════════════╗");
+        System.out.println("║              NEW TURN              ║");
+        System.out.println("╚════════════════════════════════════╝");
+
+        // Display game state
+        Card topCard = getTopDiscardCard();
         System.out.println("Top of discard pile: " + getTopDiscardCard());
         System.out.println("Deck has " + deck.size() + " cards remaining.");
 
+        // Display current player's hand
         currentPlayer.displayHand();
 
-        int cardIndex = getValidCardChoice(currentPlayer, scanner);
+        // Display playable cards
+        List<Integer> playableCards = getPlayableCards(currentPlayer);
+        System.out.println(formatPlayableCards(playableCards, currentPlayer));
+
+        // Get valid card choice from player
+        int cardIndex = getValidCardChoice(currentPlayer, scanner, playableCards);
 
         // Player chose to draw from deck
         if (cardIndex == -1) {
@@ -293,6 +403,23 @@ public class UnoGame {
             if (drawnCard != null) {
                 currentPlayer.drawCard(drawnCard);
                 System.out.println("\n " + currentPlayer.getName() + " drew: " + drawnCard);
+
+                // Check if drawn card can be played
+                if (isCardPlayable(drawnCard)) {
+                    System.out.println("You can play your drawn card immediately! Play it? (y/n): " );
+
+                    try {
+                        String playDrawn = scanner.next().toLowerCase();
+                        if (playDrawn.equals("y")) {
+                            currentPlayer.getHand().remove(drawnCard); // Remove drawn card from hand
+                            discardPile.add(drawnCard);
+                            System.out.println(currentPlayer.getName() + " played: " + drawnCard);
+                        }
+                    }
+                    catch (Exception e) {
+                        System.out.println("Invalid input. Please try again. (y/n)");
+                    }
+                }
             }
             else {
                 System.out.println("\n Deck is empty! No card drawn.");
@@ -304,11 +431,14 @@ public class UnoGame {
             discardPile.add(playedCard);
             System.out.println("\n " + currentPlayer.getName() + " played: " + playedCard);
 
-            //check if player has won (no cards left)
+            // Cases for special cards
+
+            // Check if player won
             if (currentPlayer.getHand().isEmpty()) {
-                System.out.println("\n " + currentPlayer.getName() + " won!");
-                return false; // Game ends
+                displayGameWinner(currentPlayer);
+                return false;
             }
+
         }
         // Move onto next player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
