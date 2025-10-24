@@ -5,6 +5,7 @@ import java.util.List;
  * Represents a player in the UNO game
  * 
  * @author Bhagya Patel 101324150
+ * @author Faris Hassan 101300683
  * @version 1.0
  */
 
@@ -12,6 +13,7 @@ public class Player {
 
     private String name;
     private List<Card> hand;
+    private int score = 0;
 
     /**
      * Creates a player with given name
@@ -23,6 +25,7 @@ public class Player {
 
     /**
      * Gets a players name
+     * @return the name of the player
      */
 
     public String getName(){
@@ -31,6 +34,7 @@ public class Player {
 
     /**
      * get players hand
+     * @return the players hand
      */
 
     public List<Card> getHand(){
@@ -39,9 +43,18 @@ public class Player {
 
     /**
      * Gets number of cards in hand
+     * @return the size of the players hand
      */
     public int getHandSize() {
         return hand.size();
+    }
+
+    /**
+     * Gets the player's current score
+     * @return The player's score
+     */
+    public int getScore() {
+        return score;
     }
     
     /**
@@ -51,6 +64,26 @@ public class Player {
         if (card != null) {
             hand.add(card);
         }
+    }
+
+    /**
+     * Adds points to the player's score
+     * @param points The points to add
+     */
+    public void addScore(int points) {
+        this.score += points;
+    }
+
+    /**
+     * Calculates the total point value of all cards in hand
+     * @return The sum of point values of all cards
+     */
+    public int calculateHandValue() {
+        int total = 0;
+        for (Card card : hand) {
+            total += card.getPointValue();
+        }
+        return total;
     }
 
     /**

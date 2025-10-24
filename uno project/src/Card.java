@@ -36,6 +36,26 @@ public class Card {
         return value;
     }
 
+    /**
+     * Gets the point of value of the specific card for scoring
+     * @return
+     */
+    public int getPointValue() {
+        switch(value) {
+            case ZERO: return 0;
+            case ONE: return 1;
+            case TWO: return 2;
+            case THREE: return 3;
+            case FOUR: return 4;
+            case SKIP: return 20;
+            case REVERSE: return 20;
+            case DRAW_TWO: return 50;
+            case WILD: return 40;
+            case WILD_DRAW_TWO: return 50;
+            default: return 0;
+        }
+    }
+
     @Override 
     public String toString(){
         if (color == Color.WILD){
