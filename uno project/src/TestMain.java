@@ -205,7 +205,7 @@ public class TestMain {
         System.out.println("Testing UNO rules validation only!");
 
         List<String> testPlayers = new ArrayList<>();
-        testPlayers.add("You");
+        testPlayers.add("Player 1");
         testPlayers.add("Player 2");
         UnoGame testGame = new UnoGame(testPlayers);
         testGame.startGame();
@@ -217,13 +217,19 @@ public class TestMain {
         System.out.println("═══════════════════════════════════════════════════");
 
         // Test exactly 2 turns to demonstrate validation
-        System.out.println("\n🎮 TURN 1 - Test validation rules:");
+        System.out.println("\n TURN 1 - Test validation rules:");
         boolean continueGame = testGame.playTurn();
 
+        // Display resultant state
+        testGame.displayResultantState();
+
         if (continueGame) {
-            System.out.println("\n🎮 TURN 2 - Continue testing:");
+            System.out.println("\n TURN 2 - Continue testing:");
             testGame.playTurn();
         }
+
+        // Display resultant state
+        testGame.displayResultantState();
 
         System.out.println("CARD PLACEMENT VALIDATION: WORKING!");
     }

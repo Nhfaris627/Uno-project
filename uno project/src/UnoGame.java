@@ -239,7 +239,7 @@ public class UnoGame {
      * @param playableCards List of playable cards
      * @return index of chosen card, or -1 to draw from deck
      */
-    public int getValidCardChoice(Player player, Scanner scanner, List<Integer> playableCards) {
+    private int getValidCardChoice(Player player, Scanner scanner, List<Integer> playableCards) {
         int handSize = player.getHandSize();
 
         while(true)
@@ -289,7 +289,7 @@ public class UnoGame {
      * @param player Current player
      * @return Indices of playable cards
      */
-    public List<Integer> getPlayableCards(Player player) {
+    private List<Integer> getPlayableCards(Player player) {
         List<Integer> playableCards = new ArrayList<>();
         Card topCard =  getTopDiscardCard();
 
@@ -315,7 +315,7 @@ public class UnoGame {
      * @param card Card in player's hand
      * @return true if card is playable, false otherwise
      */
-    public boolean isCardPlayable(Card card){
+    private boolean isCardPlayable(Card card){
 
         Card topCard =  getTopDiscardCard();
 
@@ -350,7 +350,7 @@ public class UnoGame {
     /**
      * Formats playable cards for display
      */
-    public String formatPlayableCards(List<Integer> playableCards, Player player) {
+    private String formatPlayableCards(List<Integer> playableCards, Player player) {
         if (playableCards.isEmpty()) {
             return "None - you must draw a card";
         }
@@ -443,5 +443,25 @@ public class UnoGame {
         // Move onto next player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         return true;
+    }
+
+    public void displayResultantState()
+    {
+        System.out.println("\n-- RESULTANT STATE --");
+
+        // Display current top of discard pile
+        Card topCard = getTopDiscardCard();
+        System.out.println("Top of discard pile: " + topCard);
+
+        // Display deck status
+        System.out.println("Cards remaining in deck: " + deck.size());
+
+        // Display next player information
+        Player nextPlayer = players.get(currentPlayerIndex);
+        System.out.println("Next player: " + nextPlayer.getName());
+        System.out.println("Cards in next player's hand: " + nextPlayer.getHandSize());
+
+        System.out.print("Next player's cards: \n");
+        nextPlayer.displayHand();
     }
 }
