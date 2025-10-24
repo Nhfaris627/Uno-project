@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bcb0cbf2-aeb5-48f9-b3e6-53e1adb500f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Uno-project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Card.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uno project/src/UnoGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/UnoGame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

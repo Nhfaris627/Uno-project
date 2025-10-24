@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class UnoGame {
     private List<Player> players;
+    private List<Card> discardPile;
     private Deck deck;
     private int currentPlayerIndex;
 
@@ -30,6 +31,7 @@ public class UnoGame {
         
         this.deck = new Deck();
         this.currentPlayerIndex = 0;
+        this.discardPile = new ArrayList<>();
         
         System.out.println("✓ Game created with " + players.size() + " players");
     }
@@ -39,6 +41,11 @@ public class UnoGame {
      */
     public void startGame() {
         System.out.println("\nDealing 7 cards to each player...\n");
+
+        Card firstCard = deck.drawCard();
+        discardPile.add(deck.drawCard());
+        System.out.println("Starting discard pile: " + getTopDiscardCard());
+        System.out.println("───────────────────────────────");
         
         // Deal 7 cards to each player
         for (Player player : players) {
@@ -89,9 +96,19 @@ public class UnoGame {
 
     public void passTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
+
+        Card drawnCard = deck.drawCard();
+
+        if (drawnCard != null) {
+            currentPlayer.drawCard(drawnCard);
+            System.out.println("\n" + currentPlayer.getName() + " drew a card: " + drawnCard);
+
+            // Simulate playing it to discard pile for observation
+            discardPile.add(drawnCard);
+            System.out.println("Card added to discard pile: " + drawnCard);
+        }
         
         // Draw a card
-        Card drawnCard = deck.drawCard();
         if (drawnCard != null) {
             currentPlayer.drawCard(drawnCard);
             System.out.println("\n" + currentPlayer.getName() + " drew a card: " + drawnCard);
@@ -101,8 +118,22 @@ public class UnoGame {
         
         // Move to next player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        
-        System.out.println("Turn passed to: " + players.get(currentPlayerIndex).getName());
+        Player nextPlayer = players.get(currentPlayerIndex);
+
+        System.out.println("\n--- RESULTANT STATE ---");
+        System.out.println("Top of discard pile: " + getTopDiscardCard());
+        System.out.println("Next player: " + nextPlayer.getName());
+        displayPlayerHand(nextPlayer);
+
+    }
+
+    /**
+     * gets the card at the top of the discard pile
+     * @return the card at the top of the discard pile
+     */
+    public Card getTopDiscardCard() {
+        if (discardPile.isEmpty()) return null;
+        return discardPile.get(discardPile.size() - 1);
     }
 
     /**
