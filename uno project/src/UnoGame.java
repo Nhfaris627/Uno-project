@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Simple UNO game(steps 1-3 milestone 1) implementatio
@@ -229,5 +230,88 @@ public class UnoGame {
      */
     public int getPlayerCount() {
         return players.size();
+    }
+
+    /**
+     * Gets valid card choice from player with keyboard inputs
+     * @param player Current player
+     * @param scanner Scanner for keyboard input
+     * @return index of chosen card, or -1 to draw from deck
+     */
+    public int getValidCardChoice(Player player, Scanner scanner) {
+        int handSize = player.getHandSize();
+
+        while(true)
+        {
+            System.out.println("\nChoose an action:");
+            System.out.println("    Enter card number [0-" + (handSize - 1) + "] to play a card");
+            System.out.println("Enter -1 to draw from deck");
+            System.out.print("Your choice: ");
+
+            try {
+                int choice = scanner.nextInt();
+
+                if (choice == -1) {
+                    return -1;
+                }
+
+                if (choice >= 0 && choice < handSize) {
+                    return choice;
+                }
+                else
+                {
+                    System.out.println("Invalid choice. Try again. Enter a number between 0 and " + (handSize - 1) +
+                            " or -1 to draw from deck");
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Invalid choice. Try again. Enter a number between 0 and " + (handSize - 1) +
+                        " or -1 to draw from deck");
+                scanner.next();
+            }
+        }
+    }
+
+    /**
+     * Handle's a player turn - allows them to play a card or draw from deck
+     * @return true if game continues, false if game ends
+     */
+    public boolean playTurn() {
+        Scanner scanner = new Scanner(System.in);
+        Player currentPlayer = getCurrentPlayer();
+
+        System.out.println("Top of discard pile: " + getTopDiscardCard());
+        System.out.println("Deck has " + deck.size() + " cards remaining.");
+
+        currentPlayer.displayHand();
+
+        int cardIndex = getValidCardChoice(currentPlayer, scanner);
+
+        // Player chose to draw from deck
+        if (cardIndex == -1) {
+            Card drawnCard = deck.drawCard();
+            if (drawnCard != null) {
+                currentPlayer.drawCard(drawnCard);
+                System.out.println("\n " + currentPlayer.getName() + " drew: " + drawnCard);
+            }
+            else {
+                System.out.println("\n Deck is empty! No card drawn.");
+            }
+        }
+        else {
+            // Player chose to play a card
+            Card playedCard = currentPlayer.getHand().remove(cardIndex);
+            discardPile.add(playedCard);
+            System.out.println("\n " + currentPlayer.getName() + " played: " + playedCard);
+
+            //check if player has won (no cards left)
+            if (currentPlayer.getHand().isEmpty()) {
+                System.out.println("\n " + currentPlayer.getName() + " won!");
+                return false; // Game ends
+            }
+        }
+        // Move onto next player
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        return true;
     }
 }
