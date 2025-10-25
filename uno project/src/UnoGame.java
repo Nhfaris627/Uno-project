@@ -14,6 +14,8 @@ public class UnoGame {
     private List<Card> discardPile;
     private Deck deck;
     private int currentPlayerIndex;
+    private boolean isClockwise = true;
+    private Scanner scanner = new Scanner(System.in);
 
     /**
      * Creates game with 2-4 players
@@ -215,6 +217,7 @@ public class UnoGame {
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
+
     
     /**
      * Gets all players
@@ -414,6 +417,13 @@ public class UnoGame {
                             currentPlayer.getHand().remove(drawnCard); // Remove drawn card from hand
                             discardPile.add(drawnCard);
                             System.out.println(currentPlayer.getName() + " played: " + drawnCard);
+
+                            handleSpecialCard(drawnCard, scanner);
+
+                            if (currentPlayer.getHand().isEmpty()) {
+                                displayGameWinner(currentPlayer);
+                                return false;
+                            }
                         }
                     }
                     catch (Exception e) {
@@ -429,20 +439,92 @@ public class UnoGame {
             // Player chose to play a card
             Card playedCard = currentPlayer.getHand().remove(cardIndex);
             discardPile.add(playedCard);
-            System.out.println("\n " + currentPlayer.getName() + " played: " + playedCard);
+            System.out.println("\n" + currentPlayer.getName() + " played: " + playedCard);
+            Player recentPlayer = currentPlayer;
 
-            // Cases for special cards
+            handleSpecialCard(playedCard, scanner);
 
             // Check if player won
-            if (currentPlayer.getHand().isEmpty()) {
-                displayGameWinner(currentPlayer);
+            if (recentPlayer.getHand().isEmpty()) {
+                displayGameWinner(recentPlayer);
                 return false;
             }
 
         }
         // Move onto next player
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        advanceToNextPlayer();
         return true;
+    }
+
+    private void advanceToNextPlayer() {
+        if (isClockwise) {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        } else {
+            currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+        }
+    }
+
+    private void handleSpecialCard(Card playedCard, Scanner scanner) {
+        if (playedCard.getValue() == Card.Value.DRAW_ONE) {
+            int nextPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1)) % players.size();
+
+            Player nextPlayer = players.get(nextPlayerIndex);
+            Card drawn = deck.drawCard();
+            if (drawn != null) {
+                nextPlayer.drawCard(drawn);
+            }
+            System.out.println("\n" + nextPlayer.getName() + " drew a card and their turn is skipped!");
+            currentPlayerIndex = nextPlayerIndex;
+
+        } else if (playedCard.getValue() == Card.Value.WILD) {
+            playedCard.setColor(promptForColorChoice(scanner));
+
+        } else if (playedCard.getValue() == Card.Value.WILD_DRAW_TWO) {
+            playedCard.setColor(promptForColorChoice(scanner));
+
+            int nextPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1)) % players.size();
+
+            Player nextPlayer = players.get(nextPlayerIndex);
+            Card card1 = deck.drawCard();
+            Card card2 = deck.drawCard();
+            if (card1 != null) nextPlayer.drawCard(card1);
+            if (card2 != null) nextPlayer.drawCard(card2);
+
+            System.out.println("\n" + nextPlayer.getName() + " drew 2 cards and their turn is skipped!");
+
+            currentPlayerIndex = nextPlayerIndex;
+
+        } else if (playedCard.getValue() == Card.Value.SKIP) {
+            System.out.println("\n Next player's turn is skipped!");
+
+            currentPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1)) % players.size();
+        } else if (playedCard.getValue() == Card.Value.REVERSE) {
+            isClockwise = !isClockwise;
+            System.out.println("\n Direction reversed!");
+        }
+    }
+
+    private Card.Color promptForColorChoice(Scanner scanner) {
+        System.out.println("\nWILD card played! Choose a color: (RED, YELLOW, GREEN, BLUE)");
+
+        Card.Color chosenColor = null;
+
+        while (chosenColor == null) {
+            try {
+                String input = scanner.next().toUpperCase().trim();
+                chosenColor = Card.Color.valueOf(input);
+
+                if (chosenColor == Card.Color.WILD) {
+                    System.out.println("Cannot choose WILD as the color. Please enter RED, YELLOW, GREEN, or BLUE:");
+                    chosenColor = null;
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid color. Please enter RED, YELLOW, GREEN, or BLUE:");
+            }
+        }
+
+        System.out.println("Color set to " + chosenColor);
+        return chosenColor;
     }
 
     public void displayResultantState()
