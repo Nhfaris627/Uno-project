@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Simple UNO game(steps 1-3 milestone 1) implementatio
  * 
  * @author Bhagya Patel 101324150
  * @author Faris Hassan 101300683

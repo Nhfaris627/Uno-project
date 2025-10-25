@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bcb0cbf2-aeb5-48f9-b3e6-53e1adb500f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/sample.puml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Deck.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uno project/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uno project/src/UnoGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/UnoGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/tests/CardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/tests/CardTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/tests/DeckTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/tests/DeckTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/tests/PlayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/tests/PlayerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/tests/UnoGameTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/tests/UnoGameTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,8 +33,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Nhfaris627/Uno-project.git&quot;,
-    &quot;accountId&quot;: &quot;4f92d40a-8603-4c96-9852-847442c5c141&quot;
+    &quot;url&quot;: &quot;https://github.com/Nhfaris627/Uno-project&quot;,
+    &quot;accountId&quot;: &quot;62f45a82-8f2f-459c-8636-2a2ea5d4687a&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -55,6 +51,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.Main.executor": "Run",
     "Application.TestMain.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JUnit.CardTest.executor": "Run",
@@ -93,22 +90,19 @@
       <recent name="C:\Users\Leto\Desktop\quickstart\Uno-project\uno project\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.UnoGameTest">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="Uno-project" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="DeckTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Uno-project" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="DeckTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="DeckTest.testDeckConstructor" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Uno-project" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="DeckTest" />
-      <option name="METHOD_NAME" value="testDeckConstructor" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -144,21 +138,13 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.UnoGameTest" />
         <item itemvalue="JUnit.UnoGameTest.testPassTurn" />
         <item itemvalue="JUnit.DeckTest.testSize" />
         <item itemvalue="JUnit.DeckTest" />
-        <item itemvalue="JUnit.DeckTest.testDeckConstructor" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
