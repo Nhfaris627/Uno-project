@@ -88,4 +88,38 @@ public class PlayerTest {
         player.drawCard(new Card(Card.Color.GREEN, Card.Value.NINE));
         assertEquals("Alice (3 cards)", player.toString());
     }
+
+    @Test
+    public void testGetScore() {
+        assertEquals(0, player.getScore());
+    }
+
+    @Test
+    public void testAddScore() {
+        assertEquals(0, player.getScore());
+
+        player.addScore(50);
+        assertEquals(50, player.getScore());
+
+        player.addScore(30);
+        assertEquals(80, player.getScore());
+    }
+
+    @Test
+    public void testCalculateHandValue() {
+        assertEquals(0, player.calculateHandValue());
+
+        // Add number cards: 5 + 7 = 12
+        player.drawCard(new Card(Card.Color.RED, Card.Value.FIVE));
+        player.drawCard(new Card(Card.Color.BLUE, Card.Value.SEVEN));
+        assertEquals(12, player.calculateHandValue());
+
+        // Add action card: 12 + 20 = 32
+        player.drawCard(new Card(Card.Color.GREEN, Card.Value.SKIP));
+        assertEquals(32, player.calculateHandValue());
+
+        // Add wild card: 32 + 40 = 72
+        player.drawCard(new Card(Card.Color.WILD, Card.Value.WILD));
+        assertEquals(72, player.calculateHandValue());
+    }
 }

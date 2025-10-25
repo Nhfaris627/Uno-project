@@ -30,6 +30,17 @@ public class CardTest {
         assertEquals("BLUE SKIP", card.toString());
     }
 
+    @Test
+    public void testGetPointValueVariousCards() {
+        assertEquals(20, new Card(Card.Color.RED, Card.Value.SKIP).getPointValue());
+        assertEquals(1, new Card(Card.Color.BLUE, Card.Value.ONE).getPointValue());
+        assertEquals(5, new Card(Card.Color.GREEN, Card.Value.FIVE).getPointValue());
+        assertEquals(20, new Card(Card.Color.BLUE, Card.Value.REVERSE).getPointValue());
+        assertEquals(10, new Card(Card.Color.GREEN, Card.Value.DRAW_ONE).getPointValue());
+        assertEquals(40, new Card(Card.Color.WILD, Card.Value.WILD).getPointValue());
+        assertEquals(50, new Card(Card.Color.WILD, Card.Value.WILD_DRAW_TWO).getPointValue());
+    }
+
     @org.junit.Test
     @Test
     public void testToStringWild() {

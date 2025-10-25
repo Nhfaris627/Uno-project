@@ -27,11 +27,5 @@ public class Main {
         while (game.checkForGameWinner(500) == null) {
             game.playTurn();
         }
-
-
-
-
-
-
     }
 }

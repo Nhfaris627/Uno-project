@@ -120,4 +120,69 @@ public class UnoGameTest {
         game.passTurn(); // Charlie -> Alice (cycles back)
         assertEquals("Alice", game.getCurrentPlayer().getName());
     }
+
+    @Test
+    public void testGetTopDiscardCard() {
+        game.startGame();
+
+        Card topCard = game.getTopDiscardCard();
+        assertNotNull(topCard);
+    }
+
+    @Test
+    public void testGetTopDiscardCardEmpty() {
+        // Create new game without starting (discard pile is empty)
+        UnoGame newGame = new UnoGame(Arrays.asList("Player1", "Player2"));
+
+        assertNull(newGame.getTopDiscardCard());
+    }
+
+    @Test
+    public void testCalculateRoundScore() {
+        game.startGame();
+
+        // Get initial scores
+        Player alice = game.getPlayers().get(0);
+        Player bob = game.getPlayers().get(1);
+        Player charlie = game.getPlayers().get(2);
+
+        int aliceInitialScore = alice.getScore();
+
+        // Calculate hand values for Bob and Charlie
+        int bobHandValue = bob.calculateHandValue();
+        int charlieHandValue = charlie.calculateHandValue();
+        int expectedPoints = bobHandValue + charlieHandValue;
+
+        // Alice wins (index 0)
+        game.calculateRoundScore(0);
+
+        // Alice should have gained points equal to opponents' hand values
+        assertEquals(aliceInitialScore + expectedPoints, alice.getScore());
+    }
+
+    @Test
+    public void testCheckForGameWinnerNoWinner() {
+        game.startGame();
+
+        // No one has reached 500 points yet
+        Player winner = game.checkForGameWinner(500);
+
+        assertNull(winner);
+    }
+
+    @Test
+    public void testCheckForGameWinnerWithWinner() {
+        game.startGame();
+
+        Player alice = game.getPlayers().get(0);
+
+        // Give Alice 500 points
+        alice.addScore(500);
+
+        Player winner = game.checkForGameWinner(500);
+
+        assertNotNull(winner);
+        assertEquals("Alice", winner.getName());
+        assertEquals(500, winner.getScore());
+    }
 }

@@ -45,8 +45,6 @@ public class Deck {
             cards.add(new Card(color, Card.Value.SKIP));
             cards.add(new Card(color, Card.Value.REVERSE));
             cards.add(new Card(color, Card.Value.REVERSE));
-            cards.add(new Card(color, Card.Value.DRAW_TWO));
-            cards.add(new Card(color, Card.Value.DRAW_TWO));
         }
         
         // Add 4 Wild cards and 4 Wild Draw Two cards

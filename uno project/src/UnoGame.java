@@ -110,15 +110,7 @@ public class UnoGame {
             discardPile.add(drawnCard);
             System.out.println("Card added to discard pile: " + drawnCard);
         }
-        
-        // Draw a card
-        if (drawnCard != null) {
-            currentPlayer.drawCard(drawnCard);
-            System.out.println("\n" + currentPlayer.getName() + " drew a card: " + drawnCard);
-        } else {
-            System.out.println("\n⚠ Deck is empty! Cannot draw card.");
-        }
-        
+
         // Move to next player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         Player nextPlayer = players.get(currentPlayerIndex);

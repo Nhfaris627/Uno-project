@@ -19,7 +19,7 @@ public class DeckTest {
 
     @Test
     public void testDeckConstructor() {
-        assertEquals(108, deck.size());
+        assertEquals(100, deck.size());
         assertFalse(deck.isEmpty());
     }
 
@@ -72,14 +72,14 @@ public class DeckTest {
 
     @Test
     public void testSize() {
-        assertEquals(108, deck.size());
+        assertEquals(100, deck.size());
 
         deck.drawCard();
-        assertEquals(107, deck.size());
+        assertEquals(99, deck.size());
 
         deck.drawCard();
         deck.drawCard();
-        assertEquals(105, deck.size());
+        assertEquals(97, deck.size());
     }
 
     @Test
