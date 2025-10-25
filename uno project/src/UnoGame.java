@@ -456,6 +456,9 @@ public class UnoGame {
         return true;
     }
 
+    /**
+     * Advance to the next player based on the direction of rotation
+     */
     private void advanceToNextPlayer() {
         if (isClockwise) {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -464,6 +467,11 @@ public class UnoGame {
         }
     }
 
+    /**
+     * Handle a special card if it is played.
+     * @param playedCard The card most recently played
+     * @param scanner Scanner object
+     */
     private void handleSpecialCard(Card playedCard, Scanner scanner) {
         if (playedCard.getValue() == Card.Value.DRAW_ONE) {
             int nextPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1)) % players.size();
@@ -504,6 +512,11 @@ public class UnoGame {
         }
     }
 
+    /**
+     * Prompts the player to choose a color after a wild card is played
+     * @param scanner Scanner object
+     * @return Color entered by the player
+     */
     private Card.Color promptForColorChoice(Scanner scanner) {
         System.out.println("\nWILD card played! Choose a color: (RED, YELLOW, GREEN, BLUE)");
 
@@ -527,6 +540,9 @@ public class UnoGame {
         return chosenColor;
     }
 
+    /**
+     * Display the resultant state of the game
+     */
     public void displayResultantState()
     {
         System.out.println("\n╔════════════════════════════════════╗");
