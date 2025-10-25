@@ -1,3 +1,5 @@
+import java.lang.invoke.CallSite;
+
 /**
  * Represents a single UNO card.
  * "Simplified version for initial implementation"
@@ -9,15 +11,15 @@
 public class Card {
 
     public enum Color{
-        RED, BLUE, GREEN, YELLOW,WILD
+        RED, BLUE, GREEN, YELLOW, WILD
     }
 
     public enum Value{
         ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE,
-        DRAW_TWO, WILD, WILD_DRAW_TWO
+        DRAW_ONE, WILD, WILD_DRAW_TWO
     }
 
-    private final Color color;
+    private Color color;
     private final Value value;
 
     /**
@@ -30,6 +32,10 @@ public class Card {
 
     public Color getColor(){
         return color;
+    }
+
+    public void setColor( Color color) {
+        this.color = color;
     }
 
     public Value getValue(){
@@ -47,9 +53,14 @@ public class Card {
             case TWO: return 2;
             case THREE: return 3;
             case FOUR: return 4;
+            case FIVE: return 5;
+            case SIX: return 6;
+            case SEVEN: return 7;
+            case EIGHT: return 8;
+            case NINE: return 9;
             case SKIP: return 20;
             case REVERSE: return 20;
-            case DRAW_TWO: return 50;
+            case DRAW_ONE: return 10;
             case WILD: return 40;
             case WILD_DRAW_TWO: return 50;
             default: return 0;

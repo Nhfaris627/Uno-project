@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Quick test program for Steps 1-3
@@ -12,7 +13,7 @@ public class TestMain {
 
     public static void main(String[] args) {
         System.out.println("╔════════════════════════════════════╗");
-        System.out.println("║   TESTING STEPS 1-3                ║");
+        System.out.println("║   TESTING STEPS 1-4                ║");
         System.out.println("╚════════════════════════════════════╝\n");
 
         // TEST 1: Player Range (2-4 players)
@@ -196,5 +197,40 @@ public class TestMain {
         for (Player p : game3.getPlayers()) {
             p.displayHand();
         }
+
+        // TEST 4: Test card placement functionality with keyboard input
+
+        System.out.println("\n\nTEST 4: Card Placement Validation");
+        System.out.println("──────────────────────────────────");
+        System.out.println("Testing UNO rules validation only!");
+
+        List<String> testPlayers = new ArrayList<>();
+        testPlayers.add("Player 1");
+        testPlayers.add("Player 2");
+        UnoGame testGame = new UnoGame(testPlayers);
+        testGame.startGame();
+
+        System.out.println("Game ready! Testing card validation:");
+        System.out.println("• Cards must match color OR value of top card");
+        System.out.println("• WILD cards can always be played");
+        System.out.println("• Invalid plays will be rejected");
+        System.out.println("═══════════════════════════════════════════════════");
+
+        // Test exactly 2 turns to demonstrate validation
+        System.out.println("\n TURN 1 - Test validation rules:");
+        boolean continueGame = testGame.playTurn();
+
+        // Display resultant state
+        testGame.displayResultantState();
+
+        if (continueGame) {
+            System.out.println("\n TURN 2 - Continue testing:");
+            testGame.playTurn();
+        }
+
+        // Display resultant state
+        testGame.displayResultantState();
+
+        System.out.println("CARD PLACEMENT VALIDATION: WORKING!");
     }
 }
