@@ -34,6 +34,10 @@ public class Card {
         return color;
     }
 
+    /**
+     * Set the color of a card
+     * @param color The color to be set to
+     */
     public void setColor( Color color) {
         this.color = color;
     }
