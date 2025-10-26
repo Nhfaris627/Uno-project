@@ -5,7 +5,9 @@ import java.lang.invoke.CallSite;
  * "Simplified version for initial implementation"
  * 
  * @author Bhagya Patel 101324150
+ * @author Faris Hassan 101300683
  * @author Ivan Arkhipov 101310636
+ * @author Nicky Fang 101304731
  * @version 1.0
  */
 
