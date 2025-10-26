@@ -5,7 +5,8 @@ import java.lang.invoke.CallSite;
  * "Simplified version for initial implementation"
  * 
  * @author Bhagya Patel 101324150
- * @verison 1.0
+ * @author Ivan Arkhipov 101310636
+ * @version 1.0
  */
 
 public class Card {
@@ -30,6 +31,10 @@ public class Card {
         this.value = value;
     }
 
+    /**
+     * Get the color of a card
+     * @return the color of the card
+     */
     public Color getColor(){
         return color;
     }
@@ -42,13 +47,17 @@ public class Card {
         this.color = color;
     }
 
+    /**
+     * Get the value of a card
+     * @return the value of a card
+     */
     public Value getValue(){
         return value;
     }
 
     /**
      * Gets the point of value of the specific card for scoring
-     * @return
+     * @return the point value of a card
      */
     public int getPointValue() {
         switch(value) {

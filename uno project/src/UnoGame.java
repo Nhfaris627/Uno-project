@@ -6,6 +6,7 @@ import java.util.Scanner;
  * 
  * @author Bhagya Patel 101324150
  * @author Faris Hassan 101300683
+ * @author Ivan Arkhipov 101310636
  * @version 1.0
  */
 public class UnoGame {
