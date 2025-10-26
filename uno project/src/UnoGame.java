@@ -6,6 +6,7 @@ import java.util.Scanner;
  * 
  * @author Bhagya Patel 101324150
  * @author Faris Hassan 101300683
+ * @author Nicky Fang 101304731
  * @version 1.0
  */
 public class UnoGame {
@@ -412,7 +413,6 @@ public class UnoGame {
                             handleSpecialCard(drawnCard, scanner);
 
                             if (currentPlayer.getHand().isEmpty()) {
-                                displayGameWinner(currentPlayer);
                                 return false;
                             }
                         }
@@ -437,7 +437,6 @@ public class UnoGame {
 
             // Check if player won
             if (recentPlayer.getHand().isEmpty()) {
-                displayGameWinner(recentPlayer);
                 return false;
             }
 

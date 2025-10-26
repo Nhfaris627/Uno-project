@@ -5,6 +5,8 @@ import java.util.List;
  * Represents a deck of UNO Cards.
  * 
  * @author Bhagya Patel 101324150
+ * @author Faris Hassan 101300683
+ * @author Nicky Fang 101304731
  * @version 1.0
  */
 
