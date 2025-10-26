@@ -6,7 +6,7 @@ import java.util.Scanner;
  * 
  * @author Bhagya Patel 101324150
  * @author Faris Hassan 101300683
- * @author Nicky Fang 101304731
+ * @author Ivan Arkhipov 101310636
  * @version 1.0
  */
 public class UnoGame {
@@ -96,7 +96,6 @@ public class UnoGame {
     /**
      * Current player draws a card and passes turn to next player
      */
-
     public void passTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
 
@@ -344,12 +343,11 @@ public class UnoGame {
 
     /**
      * Formats playable cards for display
+     * @param playableCards List of playable cards
+     * @param player The player to get the cards from
+     * @return currently playable cards formatted as a string
      */
     private String formatPlayableCards(List<Integer> playableCards, Player player) {
-        if (playableCards.isEmpty()) {
-            return "None - you must draw a card";
-        }
-
         StringBuilder sb = new StringBuilder();
         sb.append("\nPlayable Cards:\n");
         sb.append("═══════════════════════════════════\n");
@@ -362,6 +360,7 @@ public class UnoGame {
 
         sb.append("═══════════════════════════════════\n");
         sb.append("Total playable: ").append(playableCards.size()).append(" cards");
+        if (playableCards.isEmpty()) { sb.append(" - you must draw a card"); }
         return sb.toString();
     }
 
@@ -413,6 +412,7 @@ public class UnoGame {
                             handleSpecialCard(drawnCard, scanner);
 
                             if (currentPlayer.getHand().isEmpty()) {
+                                displayGameWinner(currentPlayer);
                                 return false;
                             }
                         }
@@ -437,6 +437,7 @@ public class UnoGame {
 
             // Check if player won
             if (recentPlayer.getHand().isEmpty()) {
+                displayGameWinner(recentPlayer);
                 return false;
             }
 
