@@ -6,6 +6,7 @@ import java.util.Scanner;
  * 
  * @author Bhagya Patel 101324150
  * @author Faris Hassan 101300683
+ * @author Nicky Fang 101304731
  * @author Ivan Arkhipov 101310636
  * @version 1.0
  */
@@ -412,7 +413,6 @@ public class UnoGame {
                             handleSpecialCard(drawnCard, scanner);
 
                             if (currentPlayer.getHand().isEmpty()) {
-                                displayGameWinner(currentPlayer);
                                 return false;
                             }
                         }
@@ -437,7 +437,6 @@ public class UnoGame {
 
             // Check if player won
             if (recentPlayer.getHand().isEmpty()) {
-                displayGameWinner(recentPlayer);
                 return false;
             }
 
@@ -495,11 +494,18 @@ public class UnoGame {
 
         } else if (playedCard.getValue() == Card.Value.SKIP) {
             System.out.println("\n Next player's turn is skipped!");
-
             currentPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1)) % players.size();
+
         } else if (playedCard.getValue() == Card.Value.REVERSE) {
             isClockwise = !isClockwise;
-            System.out.println("\n Direction reversed!");
+
+            // In a 2 player game, REVERSE acts like SKIP
+            if (players.size() == 2) {
+                System.out.println("\n Direction reversed! (Next player's turn is skipped)");
+                currentPlayerIndex = (currentPlayerIndex + (isClockwise ? 1 : -1) + players.size()) % players.size();
+            } else {
+                System.out.println("\n Direction reversed!");
+            }
         }
     }
 

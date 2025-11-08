@@ -81,10 +81,6 @@ public class Main {
             // Play turn
             boolean continueGame = game.playTurn();
 
-            if (!continueGame) {
-                break;
-            }
-
             // Check for round winner (someone with 0 cards)
             for (int i = 0; i < game.getPlayers().size(); i++) {
                 Player player = game.getPlayers().get(i);
@@ -102,6 +98,10 @@ public class Main {
                     System.out.println("\nRound complete. New rounds not yet implemented.");
                     return;
                 }
+            }
+
+            if (!continueGame) {
+                break;
             }
 
             // Display state after turn
