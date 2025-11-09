@@ -146,7 +146,7 @@ gradle test
 
 ## Team Contributions
 
-### Bhagya Patel (101324150)
+### Bhagya Patel 
 **Milestone 1:**
 - Implemented Card class with enums for colors and values
 - Implemented Deck class with 100-card initialization and shuffle functionality
@@ -156,7 +156,7 @@ gradle test
 - Documented classes with Javadoc comments
 - **Tasks Completed**: Steps 1-3 (Player Range, Card Visibility, Pass Turn)
 
-### Ivan Arkhipov (101310636)
+### Ivan Arkhipov 
 **Milestone 1:**
 - Implemented action card functionality for all special cards
   - Draw One card logic with turn skipping
@@ -169,7 +169,7 @@ gradle test
 - Handled edge cases for 2-player Reverse functionality
 - **Tasks Completed**: Step 4 (UNO Action Cards - all 5 card types)
 
-### Nicky Fang (101304731)
+### Nicky Fang 
 **Milestone 1:**
 - Implemented keyboard input system for card selection
 - Created interactive card placement interface
@@ -182,7 +182,7 @@ gradle test
 - Implemented card choice validation loop
 - **Tasks Completed**: Steps 5-6 (Card Placement and Validation)
 
-### Faris Hassan (101300683)
+### Faris Hassan 
 **Milestone 1:**
 - Implemented resultant state display system
 - Created scoring system with point calculation
