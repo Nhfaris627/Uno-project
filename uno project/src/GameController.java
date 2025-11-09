@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
  *
  * @author Nicky Fang 101304731
  *
+ * @author Bhagya Patel 101324150
+ * @version 2
+ * @brief added methods and restructured method parameters
+ *
  */
 public class GameController implements ActionListener, GameModelListener {
 
@@ -112,7 +116,7 @@ public class GameController implements ActionListener, GameModelListener {
         model.drawCard();
     }
 
-    //Handles ending current player turn and advnaces to next player.
+    //Handles ending current player turn and advances to next player.
     private void onEndTurn()
     {
         model.endTurn();
