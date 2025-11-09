@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Uno-project:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bcb0cbf2-aeb5-48f9-b3e6-53e1adb500f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/Uno_project_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/uno project/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-<<<<<<< HEAD
-      <change beforePath="$PROJECT_DIR$/uno project/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Card.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Deck.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/TestMain.java" beforeDir="false" />
-=======
->>>>>>> e3f1863b2111afb244cab7ebd574021279d40b06
-      <change beforePath="$PROJECT_DIR$/uno project/src/UnoGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/UnoGame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,12 +89,9 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-<<<<<<< HEAD
   <component name="ReadonlyStatusHandler">
     <option name="SHOW_DIALOG" value="false" />
   </component>
-=======
->>>>>>> e3f1863b2111afb244cab7ebd574021279d40b06
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Leto\Desktop\quickstart\Uno-project\uno project\src\main\java" />
