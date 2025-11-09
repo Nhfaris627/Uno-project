@@ -4,4 +4,15 @@ public class GameModel
     {
 
     }
+
+    public GameState getGameState()
+    {
+
+    }
+
+    public void playCard(int cardIndex)
+    {
+
+    }
+
 }
