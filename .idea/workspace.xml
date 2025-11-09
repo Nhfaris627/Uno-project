@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameController.java" afterDir="false" />
+    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="refactored GameController to implement added method in GameModelListeners interface.">
+      <change beforePath="$PROJECT_DIR$/uno project/src/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +91,23 @@
       <option name="project" value="LOCAL" />
       <updated>1762718214927</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="refactored GameController to implement added method in GameModelListeners interface.">
+      <option name="closed" value="true" />
+      <created>1762718648916</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1762718648916</updated>
+    </task>
+    <task id="LOCAL-00003" summary="refactored GameController to implement added method in GameModelListeners interface.">
+      <option name="closed" value="true" />
+      <created>1762718819816</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1762718819816</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -100,6 +115,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel" />
+    <MESSAGE value="refactored GameController to implement added method in GameModelListeners interface." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactored GameController to implement added method in GameModelListeners interface." />
   </component>
 </project>

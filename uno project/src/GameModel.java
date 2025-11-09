@@ -25,17 +25,18 @@ public class GameModel
      * Creates a new GameModel with specified player names.
      * initializes the deck, discard pile. and sets up the game state.
      * 
-     * @param playerNames List of player names (must be 2-4 players)
+     * @param playerCount List of player names (must be 2-4 players)
      * @throws IllegalArgumentException if player count is not between 2 and 4
      */
-    public GameModel(List<String> playerNames){
-        if(playerNames == null || playerNames.size() < 2 || playerNames.size() > 4){
+    public GameModel(int playerCount){
+        if(playerCount == 0 || playerCount < 2 || playerCount> 4){
             throw new IllegalArgumentException("Game requires 2-4 players");
         }
 
         this.players = new ArrayList<>();
-        for (String name : playerNames){
-            players.add(new Player(name));
+        for(int i = 0; i < playerCount; i++){
+            Player player = new Player("Player " + (i+1));
+            this.players.add(player);
         }
 
         this.deck = new Deck();
