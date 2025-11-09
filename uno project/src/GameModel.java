@@ -10,9 +10,10 @@ public class GameModel
 
     }
 
-    public void playCard(int cardIndex)
+    public void playCard(int cardIndex, Card.Color color)
     {
 
     }
+
 
 }

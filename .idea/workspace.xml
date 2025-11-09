@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="" />
+    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uno project/src/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uno project/src/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uno project/src/GameModelListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModelListener.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,7 +79,7 @@
       <option name="presentableId" value="Default" />
       <updated>1762649145328</updated>
       <workItem from="1762649146288" duration="25000" />
-      <workItem from="1762651390942" duration="732000" />
+      <workItem from="1762651390942" duration="2387000" />
     </task>
     <servers />
   </component>
