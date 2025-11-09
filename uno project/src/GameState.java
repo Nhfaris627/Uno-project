@@ -7,4 +7,5 @@ public class GameState {
     public int deckSize;
     public List<Integer> playableIndices;
     public boolean clockwise;
+    public boolean turnTaken;
 }

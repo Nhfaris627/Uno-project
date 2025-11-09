@@ -6,16 +6,25 @@ public class MainGui {
         SwingUtilities.invokeLater(() -> {
             GameView view = new GameView();
             JFrame frame = new JFrame("UNO");
-
-            int playercount = view.promptPlayerCount(frame);
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// expose root JPanel
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setContentPane(view.getRoot());
             frame.pack();
             frame.setLocationRelativeTo(null);
+
+            int count = view.promptPlayerCount(frame);
+            if (count < 2 || count > 4) {
+                frame.dispose();
+                return;
+            }
+
+            GameModel model = new GameModel(count);
+            GameController controller = new GameController(model, view);
+            view.bindController(controller);
+
+            frame.setSize(1000, 600);
             frame.setVisible(true);
+
+            model.startGame();
         });
     }
-
-
 }

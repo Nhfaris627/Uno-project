@@ -7,6 +7,7 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public final class GameView {
@@ -93,9 +94,9 @@ public final class GameView {
      * @param c the controller
      */
     public void bindController(GameController c) {
-        controller = c;
-        nextBtn.addActionListener(c);
+        this.controller = c;
         drawBtn.addActionListener(c);
+        nextBtn.addActionListener(c);
     }
 
     /**
@@ -129,6 +130,10 @@ public final class GameView {
             cardBtn.addActionListener(controller);
             handStrip.add(Box.createHorizontalStrut(16));
             handStrip.add(cardBtn);
+
+            if (s.turnTaken) {
+                cardBtn.setEnabled(false);
+            }
         }
 
         handStrip.add(Box.createHorizontalGlue());
@@ -139,8 +144,8 @@ public final class GameView {
 
         //set button playability
         boolean hasPlayable = !s.playableIndices.isEmpty();
-        nextBtn.setEnabled(true);
-        drawBtn.setEnabled(!hasPlayable);
+        drawBtn.setEnabled(!s.turnTaken && !hasPlayable);
+        nextBtn.setEnabled(s.turnTaken);
 
         //scoreboard info
         StringBuilder sb = new StringBuilder("Scoreboard:\n");

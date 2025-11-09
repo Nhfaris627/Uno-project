@@ -20,6 +20,7 @@ public class GameModel
     private List<GameModelListener> listeners;
     private static final int TARGET_SCORE = 500;
     private static final int INITIAL_HAND_SIZE = 7;
+    private boolean currentTurnTaken = false;
 
     /**
      * Creates a new GameModel with specified player names.
@@ -118,7 +119,7 @@ public class GameModel
 
         // Handle special card effects
         handleSpecialCard(playedCard);
-
+        currentTurnTaken = true;
         fireStateUpdated();
     }
 
@@ -133,6 +134,7 @@ public class GameModel
 
         if (drawnCard != null){
             currentPlayer.drawCard(drawnCard);
+            currentTurnTaken = !isCardPlayable(drawnCard);
             fireStateUpdated();
             return drawnCard;
         } else{
@@ -146,6 +148,7 @@ public class GameModel
      */
     public void endTurn() {
         advanceToNextPlayer();
+        currentTurnTaken = false;
         fireTurnAdvanced(players.get(currentPlayerIndex));
     }
 
@@ -370,6 +373,8 @@ public class GameModel
         if (gameWinner != null) {
             fireGameWon(gameWinner);
         }
+
+        newRound();
     }
 
     //EVENT FIRING METHODS
@@ -453,7 +458,38 @@ public class GameModel
         state.deckSize = deck.size();
         state.playableIndices = getPlayableIndices();
         state.clockwise = isClockwise;
+        state.turnTaken = currentTurnTaken;
         return state;
     }
 
+    public List<GameModelListener> getListeners() {
+        return listeners;
+    }
+
+    public void newRound() {
+        // Clear all hands
+        for (Player p : players) {
+            p.getHand().clear();
+        }
+
+        // Reset deck and discard pile
+        deck = new Deck();
+        discardPile.clear();
+        discardPile.add(deck.drawCard());  // new top card
+
+        // Deal 7 cards to each player
+        for (Player p : players) {
+            for (int i = 0; i < 7; i++) {
+                Card c = deck.drawCard();
+                if (c != null) p.drawCard(c);
+            }
+        }
+
+        // Reset turn state
+        currentPlayerIndex = 0;  // or rotate starting player
+        isClockwise = true;
+        currentTurnTaken = false;
+
+        fireStateUpdated();
+    }
 }

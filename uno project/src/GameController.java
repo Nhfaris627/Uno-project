@@ -33,7 +33,7 @@ public class GameController implements ActionListener, GameModelListener {
         model.addListener(this);
 
         //add this controller to the view
-        view.bindController(this);
+        //view.bindController(this);
     }
 
     /**
