@@ -7,8 +7,6 @@
     <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/uno project/src/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/GameModelListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModelListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,11 +53,13 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -79,7 +79,9 @@
       <option name="presentableId" value="Default" />
       <updated>1762649145328</updated>
       <workItem from="1762649146288" duration="25000" />
-      <workItem from="1762651390942" duration="2387000" />
+      <workItem from="1762651390942" duration="3022000" />
+      <workItem from="1762654594884" duration="1049000" />
+      <workItem from="1762667972612" duration="304000" />
     </task>
     <servers />
   </component>

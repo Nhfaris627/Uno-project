@@ -77,13 +77,15 @@ public class GameModel
     /**
      * Playes a card from the current player's hand
      * Handles wild card color selection and special card effects
-     * @param player The player playing the card
      * @param handIndex Index of the card in the player's hand
      * @param chosenColor Color chosen for wild cards (null for non-wild cards)
      * @throws IllegalArgumentException if card index is invalid or card is not playable
      */
-    public void playCard(Player player, int handIndex, Card.Color chosenColor) {
+    public void playCard(int handIndex, Card.Color chosenColor) {
         // Verify it's the correct player's turn
+
+        Player player = players.get(currentPlayerIndex);
+
         if (player != players.get(currentPlayerIndex)) {
             fireError("Not " + player.getName() + "'s turn!");
             return;
@@ -127,17 +129,18 @@ public class GameModel
 
     /**
      * Current player draws a card from the deck
-     * @param player The player drawing the card
      * @return The drawn card, or null if deck is empty
      */
-    public Card drawCard(Player player){
+    public Card drawCard(){
+        Player player = players.get(currentPlayerIndex);
+
         //verify player turn
         if (player != players.get(currentPlayerIndex)){
             firstError("Not " + player.getName() + " 's turn");
             return null;
         }
 
-        Card drawCard = deck.drawCard();
+        Card drawnCard = deck.drawCard();
 
         if (drawnCard != null){
             player.drawCard(drawnCard);
