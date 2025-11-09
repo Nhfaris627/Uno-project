@@ -1,6 +1,6 @@
 import java.util.*;
 /**
- * Cire nidek for the UNO game
+ * Core model for the UNO game
  * manages game state, rules, and notifies listeners of changes.
  * this class has no UI or I/O dependencies, all interactions happen through
  * the GameModelListener observer pattern
@@ -16,7 +16,7 @@ public class GameModel
     private List<Card> discardPile;
     private Deck deck;
     private int currentPlayerIndex;
-    private boolean clockwise;
+    private boolean isClockwise;
     private List<GameModelListener> listeners;
     private static final int TARGET_SCORE = 500;
     private static final int INITIAL_HAND_SIZE = 7;
@@ -30,7 +30,7 @@ public class GameModel
      */
     public GameModel(List<String> playerNames){
         if(playerNames == null || playerNames.size() < 2 || playerNames.size() > 4){
-            hrow new IllegalArgumentException("Game requires 2-4 players");
+            throw new IllegalArgumentException("Game requires 2-4 players");
         }
 
         this.players = new ArrayList<>();
@@ -41,7 +41,7 @@ public class GameModel
         this.deck = new Deck();
         this.discardPile = new ArrayList<>();
         this.currentPlayerIndex = 0;
-        this.clockwise = true;
+        this.isClockwise = true;
         this.listeners = new ArrayList<>();
     }
 
@@ -71,59 +71,53 @@ public class GameModel
             discardPile.add(firstCard);
         }
 
-        fireGameInitialized();
+        fireModelInit();
     }
 
     /**
-     * Playes a card from the current player's hand
-     * Handles wild card color selection and special card effects
-     * @param handIndex Index of the card in the player's hand
+     * Plays a card from the current player's hand.
+     * Handles wild card color selection and special card effects.
+     *
+     * @param player The player playing the card (unused in this simplified version)
+     * @param handIndex Index of the card in the current player's hand
      * @param chosenColor Color chosen for wild cards (null for non-wild cards)
-     * @throws IllegalArgumentException if card index is invalid or card is not playable
      */
-    public void playCard(int handIndex, Card.Color chosenColor) {
-        // Verify it's the correct player's turn
+    public void playCard(Player player, int handIndex, Card.Color chosenColor) {
+        Player currentPlayer = players.get(currentPlayerIndex);
 
-        Player player = players.get(currentPlayerIndex);
-
-        if (player != players.get(currentPlayerIndex)) {
-            fireError("Not " + player.getName() + "'s turn!");
-            return;
-        }
-        
-        if (handIndex < 0 || handIndex >= player.getHandSize()) {
+        if (handIndex < 0 || handIndex >= currentPlayer.getHandSize()) {
             fireError("Invalid card index: " + handIndex);
             return;
         }
-        
-        Card playedCard = player.getHand().get(handIndex);
-        
+
+        Card playedCard = currentPlayer.getHand().get(handIndex);
+
         // Validate the card can be played
         if (!isCardPlayable(playedCard)) {
             fireError("Cannot play " + playedCard + " on " + getTopDiscardCard());
             return;
         }
-        
+
         // Remove card from hand and add to discard pile
-        player.getHand().remove(handIndex);
+        currentPlayer.getHand().remove(handIndex);
         discardPile.add(playedCard);
-        
+
         // Handle wild card color choice
         if (playedCard.getColor() == Card.Color.WILD && chosenColor != null) {
             playedCard.setColor(chosenColor);
         }
-        
+
         fireStateUpdated();
-        
+
         // Check for round winner
-        if (player.getHandSize() == 0) {
+        if (currentPlayer.getHandSize() == 0) {
             handleRoundWin(currentPlayerIndex);
             return;
         }
-        
+
         // Handle special card effects
         handleSpecialCard(playedCard);
-        
+
         fireStateUpdated();
     }
 
@@ -132,18 +126,12 @@ public class GameModel
      * @return The drawn card, or null if deck is empty
      */
     public Card drawCard(){
-        Player player = players.get(currentPlayerIndex);
-
-        //verify player turn
-        if (player != players.get(currentPlayerIndex)){
-            firstError("Not " + player.getName() + " 's turn");
-            return null;
-        }
+        Player currentPlayer = players.get(currentPlayerIndex);
 
         Card drawnCard = deck.drawCard();
 
         if (drawnCard != null){
-            player.drawCard(drawnCard);
+            currentPlayer.drawCard(drawnCard);
             fireStateUpdated();
             return drawnCard;
         } else{
@@ -216,6 +204,7 @@ public class GameModel
      * @param l The listener to remove
      */
     public void removeListener(GameModelListener l) {
+
         listeners.remove(l);
     }
     
@@ -454,9 +443,16 @@ public class GameModel
 
 
 
-    public GameState getGameState()
+    public GameState getState()
     {
-
+        GameState state = new GameState();
+        state.players = new ArrayList<>(players);
+        state.currentPlayer = players.get(currentPlayerIndex);
+        state.topDiscard = getTopDiscardCard();
+        state.deckSize = deck.size();
+        state.playableIndices = getPlayableIndices();
+        state.clockwise = isClockwise;
+        return state;
     }
 
 }
