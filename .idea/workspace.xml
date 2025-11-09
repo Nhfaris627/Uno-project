@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="">
+    <list default="true" id="28d71652-fa6f-420b-9ba0-9b34549560df" name="Changes" comment="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno project/src/GameModelListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameModelListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uno project/src/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/uno project/src/GameController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,9 +84,22 @@
       <workItem from="1762654594884" duration="1049000" />
       <workItem from="1762667972612" duration="304000" />
     </task>
+    <task id="LOCAL-00001" summary="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel">
+      <option name="closed" value="true" />
+      <created>1762718214927</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1762718214927</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed all errors that were associated with wrong naming, and added/corrected method names and parameters in Model Listeners to fix erros in GameModel" />
   </component>
 </project>

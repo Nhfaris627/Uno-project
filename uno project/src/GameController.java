@@ -76,7 +76,7 @@ public class GameController implements ActionListener, GameModelListener {
     private void onPlayCard(int cardIndex) {
 
         //get game state
-        GameState gameState = model.getGameState();
+        GameState gameState = model.getState();
         Player currentPlayer = gameState.currentPlayer;
 
         //check card index
@@ -98,10 +98,10 @@ public class GameController implements ActionListener, GameModelListener {
         // check if its wild because if it is we need to prompt for color
         if (playedCard.getColor() == Card.Color.WILD) {
             Card.Color chosenColor = view.promptWildColor();
-            model.playCard(cardIndex, chosenColor);
+            model.playCard(currentPlayer,cardIndex, chosenColor);
         }
         else {
-            model.playCard(cardIndex, null);
+            model.playCard(currentPlayer,cardIndex, null);
 
         }
     }
@@ -129,6 +129,19 @@ public class GameController implements ActionListener, GameModelListener {
     }
 
     /**
+     * Called when the game is initialized.
+     * Refreshes the view with the initial state and shows a welcome message.
+     *
+     * @param state The initial game state
+     */
+    @Override
+    public void onModelInit(GameState state) {
+        view.render(state);
+        view.showMessage("Game started! " + state.currentPlayer.getName() + " goes first.");
+    }
+
+
+    /**
      * Called whenever the game state changes
      * Refreshes the view to show current state
      */
@@ -141,7 +154,7 @@ public class GameController implements ActionListener, GameModelListener {
      * Called when the turn advances to next player
      */
     @Override
-    public void onTurnAdvanced(GameState state) {
+    public void onTurnAdvanced(Player current, GameState state) {
         view.render(state);
     }
 
@@ -149,17 +162,29 @@ public class GameController implements ActionListener, GameModelListener {
      * Called when a player wins round
      */
     @Override
-    public void onRoundWon(String winnerName, int pointsAwarded, GameState state) {
+    public void onRoundWon(Player winner, int pointsAwarded, GameState state) {
         view.render(state);
-        view.showMessage(winnerName + " wins the round and scores " + pointsAwarded + " points!");
+        view.showMessage(winner + " wins the round and scores " + pointsAwarded + " points!");
     }
 
     /**
      * called when a player wins game
      */
     @Override
-    public void onGameWon(String winnerName, int finalScore, GameState state) {
+    public void onGameWon(Player winner, GameState state) {
         view.render(state);
-        view.showMessage(" 🎊 " + winnerName + "  WINS THE GAME WITH " + finalScore + " POINTS! 🎊 ");
+        view.showMessage(" 🎊 " + winner + "  WINS THE GAME WITH " + winner.getScore() + " POINTS! 🎊 ");
     }
+
+    /**
+     * Called when an error occurs in the game model.
+     * Displays the error message to the user.
+     *
+     * @param message The error message
+     */
+    @Override
+    public void onError(String message) {
+        view.showMessage("Error: " + message);
+    }
+
 }
