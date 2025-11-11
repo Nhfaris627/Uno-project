@@ -1,5 +1,6 @@
+import model.GameModel;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class MainGui {
     public static void main(String[] args) {

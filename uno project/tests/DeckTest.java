@@ -1,9 +1,11 @@
+import model.Card;
+import model.Deck;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * JUnit tests for the Deck class
+ * JUnit tests for the model.Deck class
  *
  * @author Faris Hassan 101300683
  * @version 1.0

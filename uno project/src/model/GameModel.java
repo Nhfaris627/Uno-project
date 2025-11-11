@@ -1,3 +1,5 @@
+package model;
+
 import java.util.*;
 /**
  * Core model for the UNO game
@@ -23,7 +25,7 @@ public class GameModel
     private boolean currentTurnTaken = false;
 
     /**
-     * Creates a new GameModel with specified player names.
+     * Creates a new model.GameModel with specified player names.
      * initializes the deck, discard pile. and sets up the game state.
      * 
      * @param playerCount List of player names (must be 2-4 players)
@@ -36,7 +38,7 @@ public class GameModel
 
         this.players = new ArrayList<>();
         for(int i = 0; i < playerCount; i++){
-            Player player = new Player("Player " + (i+1));
+            Player player = new Player("model.Player " + (i+1));
             this.players.add(player);
         }
 
@@ -138,7 +140,7 @@ public class GameModel
             fireStateUpdated();
             return drawnCard;
         } else{
-            fireError("Deck is empty!");
+            fireError("model.Deck is empty!");
             return null;
         }
     }

@@ -1,9 +1,13 @@
+import model.Card;
+import model.GameModel;
+import model.Player;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * COntroller for uno game implementing MVC pattern
- * Mediates between GameModel and GameView
+ * Mediates between model.GameModel and GameView
  * Handles user input via ActionListener and updates the view via GameModelListener
  *
  * @author Nicky Fang 101304731

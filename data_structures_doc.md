@@ -5,12 +5,12 @@ This document provides a detailed explanation of the data structures used in the
 
 ---
 
-## 1. ArrayList<Card> - Deck and Player Hands
+## 1. ArrayList<model.Card> - model.Deck and model.Player Hands
 
 ### Usage Locations:
-- **Deck.java**: `private List<Card> cards`
-- **Player.java**: `private List<Card> hand`
-- **UnoGame.java**: `private List<Card> discardPile`
+- **model.Deck.java**: `private List<model.Card> cards`
+- **model.Player.java**: `private List<model.Card> hand`
+- **UnoGame.java**: `private List<model.Card> discardPile`
 
 ### Rationale:
 ArrayList was chosen for card collections because:
@@ -22,7 +22,7 @@ ArrayList was chosen for card collections because:
 ### Key Operations:
 | Operation | Method | Time Complexity | Usage |
 |-----------|--------|-----------------|-------|
-| Add card | `add(Card)` | O(1) amortized | Drawing cards, adding to discard pile |
+| Add card | `add(model.Card)` | O(1) amortized | Drawing cards, adding to discard pile |
 | Remove card | `remove(int index)` | O(n) | Playing cards from hand |
 | Remove specific | `remove(Object)` | O(n) | Playing drawn card immediately |
 | Access by index | `get(int index)` | O(1) | Selecting cards, displaying hands |
@@ -31,14 +31,17 @@ ArrayList was chosen for card collections because:
 | Iteration | `for-each loop` | O(n) | Displaying cards, calculating values |
 
 ### Example Usage:
+
 ```java
-// Deck - Drawing a card
+import model.Card;
+
+// model.Deck - Drawing a card
 public Card drawCard() {
     if (cards.isEmpty()) return null;
     return cards.remove(cards.size() - 1);  // O(1) removal from end
 }
 
-// Player - Calculating hand value
+// model.Player - Calculating hand value
 public int calculateHandValue() {
     int total = 0;
     for (Card card : hand) {  // O(n) iteration
@@ -50,10 +53,10 @@ public int calculateHandValue() {
 
 ---
 
-## 2. ArrayList<Player> - Game Players
+## 2. ArrayList<model.Player> - Game Players
 
 ### Usage Location:
-- **UnoGame.java**: `private List<Player> players`
+- **UnoGame.java**: `private List<model.Player> players`
 
 ### Rationale:
 ArrayList was chosen for managing players because:
@@ -71,23 +74,35 @@ ArrayList was chosen for managing players because:
 | Size check | `size()` | O(1) | Modulo operations for turn cycling |
 
 ### Example Usage:
+
 ```java
+import model.Player;
+
 // Cycling through players
 public Player getCurrentPlayer() {
     return players.get(currentPlayerIndex);  // O(1) access
 }
 
 // Round score calculation
-for (int i = 0; i < players.size(); i++) {  // O(n) iteration
-    if (i != winnerIndex) {
-        totalPoints += players.get(i).calculateHandValue();
+for(
+int i = 0; i <players.
+
+size();
+
+i++){  // O(n) iteration
+        if(i !=winnerIndex){
+totalPoints +=players.
+
+get(i).
+
+calculateHandValue();
     }
-}
+            }
 ```
 
 ---
 
-## 3. ArrayList<Integer> - Playable Card Indices
+## 3. ArrayList<Integer> - Playable model.Card Indices
 
 ### Usage Location:
 - **UnoGame.java**: `getPlayableCards()` method returns `List<Integer>`
@@ -108,7 +123,10 @@ ArrayList of integers was chosen for playable card indices because:
 | Check empty | `isEmpty()` | O(1) | Determining if player must draw |
 
 ### Example Usage:
+
 ```java
+import model.Player;
+
 // Building playable cards list
 private List<Integer> getPlayableCards(Player player) {
     List<Integer> playableCards = new ArrayList<>();
@@ -121,8 +139,10 @@ private List<Integer> getPlayableCards(Player player) {
 }
 
 // Validating choice
-if (playableCards.contains(choice)) {  // O(n) search
-    return choice;
+if(playableCards.
+
+contains(choice)){  // O(n) search
+        return choice;
 }
 ```
 
@@ -132,7 +152,7 @@ if (playableCards.contains(choice)) {  // O(n) search
 
 ### Integer Variables:
 - **currentPlayerIndex** (UnoGame): Tracks whose turn it is
-- **score** (Player): Accumulates points across rounds
+- **score** (model.Player): Accumulates points across rounds
 - **Time Complexity**: O(1) for all operations (increment, comparison, modulo)
 
 ### Boolean Variables:
@@ -149,7 +169,7 @@ Primitives were chosen over wrapper classes (Integer, Boolean) because:
 
 ## 5. Enumerations
 
-### Card.Color and Card.Value:
+### model.Card.Color and model.Card.Value:
 ```java
 public enum Color { RED, BLUE, GREEN, YELLOW, WILD }
 public enum Value { ZERO, ONE, ..., NINE, SKIP, REVERSE, DRAW_ONE, WILD, WILD_DRAW_TWO }
@@ -183,7 +203,7 @@ Enums were chosen over String constants because:
 - **Con**: Doesn't preserve turn order, requires additional index tracking
 - **Decision**: ArrayList maintains natural turn order and index-based access
 
-### Why Not Stack for Deck/Discard?
+### Why Not Stack for model.Deck/Discard?
 - **Pro**: Models real-world card stacks
 - **Con**: Limited to top-only access, no iteration support
 - **Decision**: ArrayList provides flexibility for shuffle, iteration, and access while still supporting stack-like operations
@@ -212,8 +232,8 @@ Enums were chosen over String constants because:
 **where p = number of players, c = average cards per player
 
 ### Space Complexity:
-- **Deck**: O(108) = O(1) - fixed deck size
-- **Player Hands**: O(p × c) where p = players (2-4), c = cards per player (varies)
+- **model.Deck**: O(108) = O(1) - fixed deck size
+- **model.Player Hands**: O(p × c) where p = players (2-4), c = cards per player (varies)
 - **Discard Pile**: O(n) where n = cards played (grows throughout game)
 - **Total**: O(n) where n is total number of cards in play
 

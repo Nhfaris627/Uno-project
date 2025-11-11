@@ -30,7 +30,7 @@ This project implements a fully functional UNO card game with a graphical user i
 ## Features
 
 ### Gameplay Features
-- **2-4 Player Support**: Select number of players at game start
+- **2-4 model.Player Support**: Select number of players at game start
 - **Full UNO Rules**: All standard cards and special card effects
 - **Score Tracking**: Points accumulate across rounds until 500
 - **Multiple Rounds**: Automatic round reset when player wins
@@ -41,8 +41,8 @@ This project implements a fully functional UNO card game with a graphical user i
 - **SKIP**: Next player loses their turn
 - **REVERSE**: Reverses turn order direction
 - **DRAW_ONE**: Next player draws 1 card and loses turn
-- **WILD**: Player chooses new color
-- **WILD_DRAW_TWO**: Player chooses color, next player draws 2 and loses turn
+- **WILD**: model.Player chooses new color
+- **WILD_DRAW_TWO**: model.Player chooses color, next player draws 2 and loses turn
 
 ### Technical Features
 - **MVC Architecture**: Clean separation between Model, View, and Controller
@@ -108,9 +108,9 @@ java Main
 ### During Your Turn
 1. **View Your Cards**: Your hand is displayed at the bottom
 2. **Playable Cards**: Green border indicates cards you can play
-3. **Play a Card**: Click on any playable card
+3. **Play a model.Card**: Click on any playable card
 4. **Wild Cards**: If you play a WILD card, select a color from the dialog
-5. **Draw Card**: If no cards are playable, click "Draw Card"
+5. **Draw model.Card**: If no cards are playable, click "Draw model.Card"
 6. **Next Turn**: After playing or drawing, click "Next" to advance
 
 ### Winning
@@ -118,7 +118,7 @@ java Main
 - **Points**: Winner receives points equal to sum of all opponents' cards
 - **Game Win**: First player to reach 500 points wins the game
 
-### Card Values
+### model.Card Values
 - Number Cards (0-9): Face value
 - SKIP/REVERSE: 20 points
 - DRAW_ONE: 10 points
@@ -132,10 +132,10 @@ java Main
 ```
 uno-project/
 ├── src/
-│   ├── Card.java                  # Card entity (Model)
-│   ├── Deck.java                  # Deck of cards (Model)
-│   ├── Player.java                # Player entity (Model)
-│   ├── GameModel.java             # Core game logic (Model)
+│   ├── model.Card.java                  # model.Card entity (Model)
+│   ├── model.Deck.java                  # model.Deck of cards (Model)
+│   ├── model.Player.java                # model.Player entity (Model)
+│   ├── model.GameModel.java             # Core game logic (Model)
 │   ├── GameState.java             # Immutable state snapshot (Model)
 │   ├── GameModelListener.java    # Observer interface
 │   ├── GameView.java              # GUI components (View)
@@ -144,9 +144,9 @@ uno-project/
 │   ├── Main.java                  # Console version (legacy)
 │   └── UnoGame.java               # Console game logic (legacy)
 ├── tests/
-│   ├── CardTest.java              # Card class tests
-│   ├── DeckTest.java              # Deck class tests
-│   ├── PlayerTest.java            # Player class tests
+│   ├── CardTest.java              # model.Card class tests
+│   ├── DeckTest.java              # model.Deck class tests
+│   ├── PlayerTest.java            # model.Player class tests
 │   ├── GameModelCoreTest.java    # Core game logic tests
 │   └── UnoGameTest.java           # Legacy tests
 ├── docs/
@@ -163,8 +163,8 @@ uno-project/
 
 ### Model Layer
 **Purpose**: Manages game state and business logic
-- `GameModel.java`: Core game engine, enforces rules
-- `Card.java`, `Deck.java`, `Player.java`: Game entities
+- `model.GameModel.java`: Core game engine, enforces rules
+- `model.Card.java`, `model.Deck.java`, `model.Player.java`: Game entities
 - `GameState.java`: Immutable state snapshots
 - **No UI dependencies**: Pure logic, fully testable
 
@@ -196,10 +196,10 @@ User sees ← View ← Controller ← Model (fires event)
 ## Testing
 
 ### Test Coverage
-- **Card.java**: 6 tests 
-- **Deck.java**: 6 tests 
-- **Player.java**: 10 tests 
-- **GameModel.java**: 20 tests 
+- **model.Card.java**: 6 tests 
+- **model.Deck.java**: 6 tests 
+- **model.Player.java**: 10 tests 
+- **model.GameModel.java**: 20 tests 
 - **Total**: 42 unit tests
 
 ### Running Tests
@@ -210,22 +210,22 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 ```
 
 ### Test Categories
-1. **Game Setup**: Player counts, initial dealing, discard pile
-2. **Card Playing**: Valid/invalid plays, hand updates
+1. **Game Setup**: model.Player counts, initial dealing, discard pile
+2. **model.Card Playing**: Valid/invalid plays, hand updates
 3. **Turn Management**: Turn advancement, direction changes
 4. **Special Cards**: SKIP, REVERSE, DRAW effects
 5. **Winning Conditions**: Round wins, scoring, game wins
-6. **Card Playability**: Color/value matching rules
+6. **model.Card Playability**: Color/value matching rules
 
 ---
 
 ## Known Issues
 
 ### Current Issues
-1. **Deck Exhaustion**: If deck runs out before round ends, game may stall
+1. **model.Deck Exhaustion**: If deck runs out before round ends, game may stall
    - *Planned Fix*: Implement discard pile reshuffling
    
-2. **REVERSE in 2-Player**: Acts as SKIP but message could be clearer
+2. **REVERSE in 2-model.Player**: Acts as SKIP but message could be clearer
    - *Status*: Working as intended per UNO rules, UI feedback could improve
 
 3. **Multiple Rounds**: Game ends after first round win
@@ -234,7 +234,7 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 ### Future Enhancements
 - AI players for single-player mode
 - Network multiplayer support
-- Card animation effects
+- model.Card animation effects
 - Sound effects and music
 - Customizable house rules
 
@@ -245,22 +245,22 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 ### Milestone 1 (Console Version)
 **All Team Members**: Collaborative development of console-based UNO
 - Game logic implementation
-- Card, Deck, Player classes
+- model.Card, model.Deck, model.Player classes
 - Basic turn management
 - Special card effects
 
 ### Milestone 2 (MVC + GUI)
 
 #### **Bhagya Patel** (101324150) - Model & Event System
-- Refactored `UnoGame` into `GameModel` (pure logic, no I/O)
+- Refactored `UnoGame` into `model.GameModel` (pure logic, no I/O)
 - Implemented observer pattern (`GameModelListener`, `GameState`)
 - Event firing system for all state changes
 - Data consistency and synchronization
 - **Deliverables**:
-  - `GameModel.java` with full JavaDocs
+  - `model.GameModel.java` with full JavaDocs
   - `GameModelListener.java` interface
   - `GameState.java` immutable snapshots
-  - Sequence diagrams: Draw Card, Play Wild
+  - Sequence diagrams: Draw model.Card, Play Wild
   - Model unit tests
 
 #### **Nicky Fang** (101304731) - Controller & Event Handling
@@ -277,7 +277,7 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 
 #### **Ivan Arkhipov** (101310636) - GUI/View Layer
 - Built complete Swing UI in JFrame
-- Player count selection (2-4 dialog)
+- model.Player count selection (2-4 dialog)
 - Hand panel with clickable cards
 - Top card and deck display
 - Control buttons (Draw, Next)

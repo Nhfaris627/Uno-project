@@ -1,8 +1,9 @@
+import model.Card;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * JUnit tests for the Card class
+ * JUnit tests for the model.Card class
  *
  * @author Faris Hassan 101300683
  * @version 1.0

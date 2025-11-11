@@ -1,3 +1,6 @@
+import model.Card;
+import model.Player;
+
 import java.util.*;
 
 public class GameState {

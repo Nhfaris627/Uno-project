@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
+import model.Card;
+import model.Player;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.List;
@@ -30,7 +32,7 @@ public final class GameView {
     private final JPanel handStrip = new JPanel(); // BoxLayout.X_AXIS
     private final JScrollPane handScroll = new JScrollPane(handStrip);
     private final JButton nextBtn = new JButton("Next");
-    private final JButton drawBtn = new JButton("Draw Card");
+    private final JButton drawBtn = new JButton("Draw model.Card");
 
     //scoreboard
     private final JTextArea scoreArea = new JTextArea(3, 30);
@@ -43,7 +45,7 @@ public final class GameView {
         root.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 
         //top card section
-        JPanel top = titled("Top Card");
+        JPanel top = titled("Top model.Card");
         top.setLayout(new BorderLayout());
         top.add(topCardText, BorderLayout.CENTER);
         root.add(top);
@@ -161,7 +163,7 @@ public final class GameView {
      */
     public void render(GameState s) {
         //status section
-        currentLabel.setText("Current Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
+        currentLabel.setText("Current model.Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
         statusLabel.setText("Status: ");
 
         if (s.topDiscard.getValue() == Card.Value.WILD || s.topDiscard.getValue() == Card.Value.WILD_DRAW_TWO) {

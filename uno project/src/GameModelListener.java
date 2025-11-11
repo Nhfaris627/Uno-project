@@ -1,6 +1,8 @@
+import model.Player;
+
 /**
  *
- * Listener interface for GameModel events
+ * Listener interface for model.GameModel events
  * Implements the observer pattern to notify views and controllers of game state changes
  * @author Bhagya Patel 101324150
  *
@@ -44,7 +46,7 @@ public interface GameModelListener {
      *
      * Example usage in controller:
      * <pre>
-     * public void onTurnAdvanced(Player current, GameState state) {
+     * public void onTurnAdvanced(model.Player current, GameState state) {
      *     view.render(state);
      *     view.showMessage("It's now " + current.getName() + "'s turn");
      * }
@@ -76,7 +78,7 @@ public interface GameModelListener {
      * Common error scenarios:
      * - Invalid card plays (card not playable on current discard)
      * - Playing out of turn
-     * - Deck exhaustion (no cards left to draw)
+     * - model.Deck exhaustion (no cards left to draw)
      * - Invalid card index
      *
      * Example usage in controller:

@@ -1,3 +1,6 @@
+import model.Card;
+import model.GameModel;
+import model.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -6,7 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Core unit tests for GameModel - focuses on essential game functionality.
+ * Core unit tests for model.GameModel - focuses on essential game functionality.
  * Tests game setup, basic card playing, turn management, and winning conditions.
  *
  * @author Faris Hassan 101300683
@@ -91,7 +94,7 @@ public class GameModelTests {
 
         Card drawn = model.drawCard();
 
-        assertNotNull(drawn, "Player Should draw a card");
+        assertNotNull(drawn, "model.Player Should draw a card");
         assertEquals(initialSize + 1, currentPlayer.getHandSize());
     }
 
@@ -290,7 +293,7 @@ public class GameModelTests {
         GameState newState = model.getState();
 
         assertEquals(deckSize - 1, newState.deckSize,
-                "Deck size should decrease after drawing");
+                "model.Deck size should decrease after drawing");
     }
 
     @Test
