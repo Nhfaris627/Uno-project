@@ -10,9 +10,12 @@ import controller.GameState;
 import model.Card;
 import model.Player;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -115,16 +118,28 @@ public final class GameView {
      */
     private ImageIcon getIcon(Card c,  int x, int y) {
         ClassLoader classLoader = getClass().getClassLoader();
-        URL imageURL = null;
+        String resourcePath;
+
+        String value = c.getValue().toString().toLowerCase();
+        String color = c.getColor().toString().toLowerCase();
 
         if (c.getValue() == Card.Value.WILD || c.getValue() == Card.Value.WILD_DRAW_TWO) {
-            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getValue() + ".png");
+            resourcePath = "view/unoCards/" + value + "/" + value + ".png";
         } else {
-            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getColor() + ".png");
+            resourcePath = "view/unoCards/" + value + "/" + color + ".png";
         }
 
-        if (imageURL != null) {
-            ImageIcon icon = new ImageIcon(imageURL);
+        System.out.println("Trying to load: " + resourcePath);
+
+        InputStream is = classLoader.getResourceAsStream(resourcePath);
+
+        if (is != null) {
+            ImageIcon icon = null;
+            try {
+                icon = new ImageIcon(ImageIO.read(is));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             Image image = icon.getImage();
             return new ImageIcon(image.getScaledInstance(x, y, Image.SCALE_SMOOTH));
         }
