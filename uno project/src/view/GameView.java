@@ -37,7 +37,7 @@ public final class GameView {
     private final JPanel handStrip = new JPanel(); // BoxLayout.X_AXIS
     private final JScrollPane handScroll = new JScrollPane(handStrip);
     private final JButton nextBtn = new JButton("Next");
-    private final JButton drawBtn = new JButton("Draw model.Card");
+    private final JButton drawBtn = new JButton("Draw Card");
 
     //scoreboard
     private final JTextArea scoreArea = new JTextArea(3, 30);
@@ -50,7 +50,7 @@ public final class GameView {
         root.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 
         //top card section
-        JPanel top = titled("Top model.Card");
+        JPanel top = titled("Top Card");
         top.setLayout(new BorderLayout());
         top.add(topCardText, BorderLayout.CENTER);
         root.add(top);
