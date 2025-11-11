@@ -1,3 +1,5 @@
+package controller;
+
 import model.Player;
 
 /**
@@ -16,7 +18,7 @@ public interface GameModelListener {
      *
      * ex.
      * <pre>
-     *     Public void onModelInit(GameState state){
+     *     Public void onModelInit(controller.GameState state){
      *         view.render(state);
      *         view.showMessage("Game started! " + state.currentPlayer.getName + "goes first");
      *     }
@@ -46,7 +48,7 @@ public interface GameModelListener {
      *
      * Example usage in controller:
      * <pre>
-     * public void onTurnAdvanced(model.Player current, GameState state) {
+     * public void onTurnAdvanced(Player current, controller.GameState state) {
      *     view.render(state);
      *     view.showMessage("It's now " + current.getName() + "'s turn");
      * }

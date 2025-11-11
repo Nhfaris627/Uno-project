@@ -1,3 +1,5 @@
+package controller;
+
 import model.Card;
 import model.Player;
 

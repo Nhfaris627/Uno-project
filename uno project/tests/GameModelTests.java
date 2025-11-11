@@ -1,3 +1,4 @@
+import controller.GameState;
 import model.Card;
 import model.GameModel;
 import model.Player;

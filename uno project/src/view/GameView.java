@@ -1,10 +1,12 @@
-/**
+package view; /**
  * The view for the uno GUI
  *
  * @author Ivan Arkhipov 101310636
  * @version 1.0
  */
 
+import controller.GameController;
+import controller.GameState;
 import model.Card;
 import model.Player;
 
@@ -38,7 +40,7 @@ public final class GameView {
     private final JTextArea scoreArea = new JTextArea(3, 30);
 
     /**
-     * Constructor for the GameView class. Sets up panels and layout for the GUI
+     * Constructor for the view.GameView class. Sets up panels and layout for the GUI
      */
     public GameView() {
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
@@ -158,16 +160,16 @@ public final class GameView {
     }
 
     /**
-     * Render the entire screen based on the GameState object, emitted by the model
-     * @param s the GameState to render
+     * Render the entire screen based on the controller.GameState object, emitted by the model
+     * @param s the controller.GameState to render
      */
     public void render(GameState s) {
         //status section
-        currentLabel.setText("Current model.Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
+        currentLabel.setText("Current Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
         statusLabel.setText("Status: ");
 
         if (s.topDiscard.getValue() == Card.Value.WILD || s.topDiscard.getValue() == Card.Value.WILD_DRAW_TWO) {
-            statusLabel.setText("Status: WILD" + s.topDiscard.getColor());
+            statusLabel.setText("Status: WILD " + s.topDiscard.getColor());
         }
 
         //build hand section panel
