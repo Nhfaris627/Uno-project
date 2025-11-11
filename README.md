@@ -8,7 +8,6 @@ A graphical implementation of the classic UNO card game using the Model-View-Con
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Features](#features)
-- [System Requirements](#system-requirements)
 - [Installation & Setup](#installation--setup)
 - [How to Run](#how-to-run)
 - [How to Play](#how-to-play)
@@ -90,14 +89,6 @@ java -jar junit-platform-console-standalone.jar --class-path . --scan-class-path
 java MainGui
 ```
 
-### Console Version (Milestone 1 - Legacy)
-```bash
-# From the src directory
-java Main
-```
-
----
-
 ## How to Play
 
 ### Game Start
@@ -141,8 +132,6 @@ uno-project/
 │   ├── GameView.java              # GUI components (View)
 │   ├── GameController.java        # Event handler (Controller)
 │   ├── MainGui.java               # Application entry point
-│   ├── Main.java                  # Console version (legacy)
-│   └── UnoGame.java               # Console game logic (legacy)
 ├── tests/
 │   ├── CardTest.java              # model.Card class tests
 │   ├── DeckTest.java              # model.Deck class tests
@@ -190,7 +179,6 @@ User Click → View → Controller → Model
                                    ↓
 User sees ← View ← Controller ← Model (fires event)
 ```
-
 ---
 
 ## Testing
@@ -224,30 +212,17 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 ### Current Issues
 1. **model.Deck Exhaustion**: If deck runs out before round ends, game may stall
    - *Planned Fix*: Implement discard pile reshuffling
-   
-2. **REVERSE in 2-model.Player**: Acts as SKIP but message could be clearer
-   - *Status*: Working as intended per UNO rules, UI feedback could improve
 
-3. **Multiple Rounds**: Game ends after first round win
+2. **Multiple Rounds**: Game ends after first round win
    - *Status*: Fixed in current version with `newRound()` method
 
 ### Future Enhancements
-- AI players for single-player mode
-- Network multiplayer support
-- model.Card animation effects
-- Sound effects and music
-- Customizable house rules
+- AI players for single-player or multiplayer mode
+- Save/load progress
 
 ---
 
 ## Team Contributions
-
-### Milestone 1 (Console Version)
-**All Team Members**: Collaborative development of console-based UNO
-- Game logic implementation
-- model.Card, model.Deck, model.Player classes
-- Basic turn management
-- Special card effects
 
 ### Milestone 2 (MVC + GUI)
 
