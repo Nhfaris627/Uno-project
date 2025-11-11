@@ -21,7 +21,7 @@ public class MainGui {
             GameController controller = new GameController(model, view);
             view.bindController(controller);
 
-            frame.setSize(1000, 600);
+            frame.setSize(1200, 800);
             frame.setVisible(true);
 
             model.startGame();

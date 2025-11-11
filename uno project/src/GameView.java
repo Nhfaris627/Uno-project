@@ -8,7 +8,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 public final class GameView {
     private GameController controller;
@@ -17,7 +20,7 @@ public final class GameView {
     private final JPanel root = new JPanel();
 
     //top card
-    private final JLabel topCardText = new JLabel("-", SwingConstants.CENTER);
+    private final JLabel topCardText = new JLabel("", SwingConstants.CENTER);
 
     //status info
     private final JLabel currentLabel = new JLabel("Current: -");
@@ -100,17 +103,70 @@ public final class GameView {
     }
 
     /**
+     * Get an imageicon from the card directory, and scale it to specified x and y
+     * @param c The card to get icon
+     * @param x the width of the scaled image
+     * @param y the height of the scaled image
+     * @return ImageIcon
+     */
+    private ImageIcon getIcon(Card c,  int x, int y) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL imageURL = null;
+
+        if (c.getValue() == Card.Value.WILD || c.getValue() == Card.Value.WILD_DRAW_TWO) {
+            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getValue() + ".png");
+        } else {
+            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getColor() + ".png");
+        }
+
+        if (imageURL != null) {
+            ImageIcon icon = new ImageIcon(imageURL);
+            Image image = icon.getImage();
+            return new ImageIcon(image.getScaledInstance(x, y, Image.SCALE_SMOOTH));
+        }
+
+        return null;
+    }
+
+    /**
+     * Get an icon that is 70% opacity and small light grey overlay
+     * @param icon the icon to modify
+     * @return the disabled icon
+     */
+    private ImageIcon getDisabledIcon(ImageIcon icon) {
+        Image image = icon.getImage();
+
+        BufferedImage buffered = new BufferedImage(
+                image.getWidth(null),
+                image.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        Graphics2D g = buffered.createGraphics();
+
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+        g.drawImage(image, 0, 0, null);
+
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+        g.setColor(new Color(200, 200, 200));
+        g.fillRect(0, 0, buffered.getWidth(), buffered.getHeight());
+        g.dispose();
+
+        return new ImageIcon(buffered);
+    }
+
+    /**
      * Render the entire screen based on the GameState object, emitted by the model
      * @param s the GameState to render
      */
     public void render(GameState s) {
-        //top card
-        topCardText.setText(s.topDiscard == null ? "-" : s.topDiscard.toString());
-
         //status section
-        currentLabel.setText("Current Player: " + s.currentPlayer.getName() +
-                " | Deck: " + s.deckSize + (s.clockwise ? "  →" : "  ←"));
+        currentLabel.setText("Current Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
         statusLabel.setText("Status: ");
+
+        if (s.topDiscard.getValue() == Card.Value.WILD || s.topDiscard.getValue() == Card.Value.WILD_DRAW_TWO) {
+            statusLabel.setText("Status: WILD" + s.topDiscard.getColor());
+        }
 
         //build hand section panel
         handStrip.removeAll();
@@ -120,10 +176,14 @@ public final class GameView {
         List<Card> hand = s.currentPlayer.getHand();
         for (int i = 0; i < hand.size(); i++) {
             Card c = hand.get(i);
-            JButton cardBtn = new JButton(c.toString());
+            System.out.println(c);
+            JButton cardBtn = new JButton();
+            cardBtn.setIcon(getIcon(c, 80, 120));
+            cardBtn.setDisabledIcon(getDisabledIcon(Objects.requireNonNull(getIcon(c, 80, 120))));
+            cardBtn.setSize(80, handStrip.getHeight());
             final int idx = i;
             boolean playable = s.playableIndices.contains(i);
-            if (playable) cardBtn.setBorder(BorderFactory.createLineBorder(java.awt.Color.GREEN, 2));
+            if (playable) cardBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
 
             //controller handles playing card
             cardBtn.setActionCommand("PLAY:" + idx);
@@ -134,6 +194,9 @@ public final class GameView {
             if (s.turnTaken) {
                 cardBtn.setEnabled(false);
             }
+
+            //update top card
+            topCardText.setIcon(getIcon(s.topDiscard, 160, 240));
         }
 
         handStrip.add(Box.createHorizontalGlue());
