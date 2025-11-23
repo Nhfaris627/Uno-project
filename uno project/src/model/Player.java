@@ -91,6 +91,16 @@ public class Player {
     }
 
     /**
+     * Flips all cards in the player's hand to their opposite side
+     * Used when a FLIP card is played
+     */
+    public void flipHand() {
+        for (Card card : hand) {
+            card.flip();
+        }
+    }
+
+    /**
      * Displays the players hand with card indices
      */
 
