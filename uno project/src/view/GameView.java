@@ -1,16 +1,21 @@
-/**
+package view; /**
  * The view for the uno GUI
  *
  * @author Ivan Arkhipov 101310636
  * @version 1.0
  */
 
+import controller.GameController;
+import controller.GameState;
 import model.Card;
 import model.Player;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -32,20 +37,20 @@ public final class GameView {
     private final JPanel handStrip = new JPanel(); // BoxLayout.X_AXIS
     private final JScrollPane handScroll = new JScrollPane(handStrip);
     private final JButton nextBtn = new JButton("Next");
-    private final JButton drawBtn = new JButton("Draw model.Card");
+    private final JButton drawBtn = new JButton("Draw Card");
 
     //scoreboard
     private final JTextArea scoreArea = new JTextArea(3, 30);
 
     /**
-     * Constructor for the GameView class. Sets up panels and layout for the GUI
+     * Constructor for the view.GameView class. Sets up panels and layout for the GUI
      */
     public GameView() {
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
         root.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 
         //top card section
-        JPanel top = titled("Top model.Card");
+        JPanel top = titled("Top Card");
         top.setLayout(new BorderLayout());
         top.add(topCardText, BorderLayout.CENTER);
         root.add(top);
@@ -113,16 +118,28 @@ public final class GameView {
      */
     private ImageIcon getIcon(Card c,  int x, int y) {
         ClassLoader classLoader = getClass().getClassLoader();
-        URL imageURL = null;
+        String resourcePath;
+
+        String value = c.getValue().toString().toLowerCase();
+        String color = c.getColor().toString().toLowerCase();
 
         if (c.getValue() == Card.Value.WILD || c.getValue() == Card.Value.WILD_DRAW_TWO) {
-            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getValue() + ".png");
+            resourcePath = "view/unoCards/" + value + "/" + value + ".png";
         } else {
-            imageURL = classLoader.getResource("unoCards/" + c.getValue() + "/" + c.getColor() + ".png");
+            resourcePath = "view/unoCards/" + value + "/" + color + ".png";
         }
 
-        if (imageURL != null) {
-            ImageIcon icon = new ImageIcon(imageURL);
+        System.out.println("Trying to load: " + resourcePath);
+
+        InputStream is = classLoader.getResourceAsStream(resourcePath);
+
+        if (is != null) {
+            ImageIcon icon = null;
+            try {
+                icon = new ImageIcon(ImageIO.read(is));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             Image image = icon.getImage();
             return new ImageIcon(image.getScaledInstance(x, y, Image.SCALE_SMOOTH));
         }
@@ -158,16 +175,16 @@ public final class GameView {
     }
 
     /**
-     * Render the entire screen based on the GameState object, emitted by the model
-     * @param s the GameState to render
+     * Render the entire screen based on the controller.GameState object, emitted by the model
+     * @param s the controller.GameState to render
      */
     public void render(GameState s) {
         //status section
-        currentLabel.setText("Current model.Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
+        currentLabel.setText("Current Player: " + s.currentPlayer.getName() + (s.clockwise ? "  →" : "  ←"));
         statusLabel.setText("Status: ");
 
         if (s.topDiscard.getValue() == Card.Value.WILD || s.topDiscard.getValue() == Card.Value.WILD_DRAW_TWO) {
-            statusLabel.setText("Status: WILD" + s.topDiscard.getColor());
+            statusLabel.setText("Status: WILD " + s.topDiscard.getColor());
         }
 
         //build hand section panel

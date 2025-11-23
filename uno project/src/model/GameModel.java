@@ -1,11 +1,14 @@
 package model;
 
 import java.util.*;
+import controller.GameModelListener;
+import controller.GameState;
+
 /**
  * Core model for the UNO game
  * manages game state, rules, and notifies listeners of changes.
  * this class has no UI or I/O dependencies, all interactions happen through
- * the GameModelListener observer pattern
+ * the controller.GameModelListener observer pattern
  * 
  * @author Bhagya Patel, 101324150
  * @version 2.0
@@ -38,7 +41,7 @@ public class GameModel
 
         this.players = new ArrayList<>();
         for(int i = 0; i < playerCount; i++){
-            Player player = new Player("model.Player " + (i+1));
+            Player player = new Player("Player " + (i+1));
             this.players.add(player);
         }
 

@@ -87,7 +87,7 @@ java -jar junit-platform-console-standalone.jar --class-path . --scan-class-path
 ### GUI Version (Recommended)
 ```bash
 # From the src directory
-java MainGui
+java Main
 ```
 
 ### Console Version (Milestone 1 - Legacy)
@@ -101,7 +101,7 @@ java Main
 ## How to Play
 
 ### Game Start
-1. Run `MainGui`
+1. Run `Main`
 2. Select number of players (2-4)
 3. Game automatically deals 7 cards to each player
 
@@ -136,11 +136,11 @@ uno-project/
 │   ├── model.Deck.java                  # model.Deck of cards (Model)
 │   ├── model.Player.java                # model.Player entity (Model)
 │   ├── model.GameModel.java             # Core game logic (Model)
-│   ├── GameState.java             # Immutable state snapshot (Model)
-│   ├── GameModelListener.java    # Observer interface
-│   ├── GameView.java              # GUI components (View)
-│   ├── GameController.java        # Event handler (Controller)
-│   ├── MainGui.java               # Application entry point
+│   ├── controller.GameState.java             # Immutable state snapshot (Model)
+│   ├── controller.GameModelListener.java    # Observer interface
+│   ├── view.GameView.java              # GUI components (View)
+│   ├── controller.GameController.java        # Event handler (Controller)
+│   ├── Main.java               # Application entry point
 │   ├── Main.java                  # Console version (legacy)
 │   └── UnoGame.java               # Console game logic (legacy)
 ├── tests/
@@ -165,21 +165,21 @@ uno-project/
 **Purpose**: Manages game state and business logic
 - `model.GameModel.java`: Core game engine, enforces rules
 - `model.Card.java`, `model.Deck.java`, `model.Player.java`: Game entities
-- `GameState.java`: Immutable state snapshots
+- `controller.GameState.java`: Immutable state snapshots
 - **No UI dependencies**: Pure logic, fully testable
 
 ### View Layer
 **Purpose**: Displays game state to user
-- `GameView.java`: Main GUI coordinator
+- `view.GameView.java`: Main GUI coordinator
 - Panels for hand, discard pile, controls, scoreboard
 - `promptWildColor()`: Color selection dialog
 - **No game logic**: Only rendering and user input capture
 
 ### Controller Layer
 **Purpose**: Mediates between Model and View
-- `GameController.java`: Handles all events
+- `controller.GameController.java`: Handles all events
 - Implements `ActionListener` for button clicks
-- Implements `GameModelListener` for model updates
+- Implements `controller.GameModelListener` for model updates
 - **Validates actions**: Ensures valid moves before model changes
 
 ### Communication Flow
@@ -253,24 +253,24 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 
 #### **Bhagya Patel** (101324150) - Model & Event System
 - Refactored `UnoGame` into `model.GameModel` (pure logic, no I/O)
-- Implemented observer pattern (`GameModelListener`, `GameState`)
+- Implemented observer pattern (`controller.GameModelListener`, `controller.GameState`)
 - Event firing system for all state changes
 - Data consistency and synchronization
 - **Deliverables**:
   - `model.GameModel.java` with full JavaDocs
-  - `GameModelListener.java` interface
-  - `GameState.java` immutable snapshots
+  - `controller.GameModelListener.java` interface
+  - `controller.GameState.java` immutable snapshots
   - Sequence diagrams: Draw model.Card, Play Wild
   - Model unit tests
 
 #### **Nicky Fang** (101304731) - Controller & Event Handling
-- Implemented `GameController` mediating Model ↔ View
+- Implemented `controller.GameController` mediating Model ↔ View
 - `ActionListener` implementation for button events
-- `GameModelListener` implementation for model updates
+- `controller.GameModelListener` implementation for model updates
 - Command routing (PLAY, DRAW, NEXT, CHOOSE_COLOR)
 - Error handling and validation
 - **Deliverables**:
-  - `GameController.java` with JavaDocs
+  - `controller.GameController.java` with JavaDocs
   - Controller wiring and registration
   - Sequence diagram: Button Click → Render flow
   - Integration testing
@@ -283,9 +283,9 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 - Control buttons (Draw, Next)
 - Color picker dialog for Wild cards
 - **Deliverables**:
-  - `GameView.java` with all panels
+  - `view.GameView.java` with all panels
   - UI component layout and styling
-  - `render(GameState)` method
+  - `render(controller.GameState)` method
   - GUI screenshots/demo
   - Responsive mouse interaction
 
