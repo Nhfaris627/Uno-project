@@ -29,7 +29,7 @@ public class Card {
     }
 
     private Color color;
-    private final Value value;
+    private Value value;
     private Side currentSide;
 
     // Store both sides of the card for flipping
@@ -74,9 +74,11 @@ public class Card {
         if (currentSide == Side.LIGHT) {
             currentSide = Side.DARK;
             this.color = darkColor;
+            this.value = darkValue;
         } else {
             currentSide = Side.LIGHT;
             this.color = lightColor;
+            this.value = lightValue;
         }
     }
 

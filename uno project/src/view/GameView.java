@@ -283,7 +283,19 @@ public final class GameView {
         Object[] options = { "RED", "YELLOW", "GREEN", "BLUE" };
         int choice = JOptionPane.showOptionDialog(root, "Choose a color", "Wild",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (choice < 0) return Card.Color.RED;
+        if (choice < 0) return null;
+        return Card.Color.valueOf(options[choice].toString());
+    }
+
+    /**
+     * Create a pop up dialogue to prompt the user for the color they want to play after playing a dark wild card
+     * @return return the color chosen by the user
+     */
+    public Card.Color promptDarkWildColor() {
+        Object[] options = { "ORANGE", "PINK", "PURPLE", "TEAL" };
+        int choice = JOptionPane.showOptionDialog(root, "Choose a color", "Wild",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (choice < 0) return null;
         return Card.Color.valueOf(options[choice].toString());
     }
 

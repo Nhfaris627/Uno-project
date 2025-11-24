@@ -54,8 +54,8 @@ public class Deck {
             }
 
             // Two skip cards per color and per side, light and dark
-            cards.add(new Card(color, Card.Value.SKIP, darkColor, Card.Value.SKIP, Card.Side.LIGHT));
-            cards.add(new Card(color, Card.Value.SKIP, darkColor, Card.Value.SKIP, Card.Side.LIGHT));
+            cards.add(new Card(color, Card.Value.SKIP, darkColor, Card.Value.SKIP_EVERYONE, Card.Side.LIGHT));
+            cards.add(new Card(color, Card.Value.SKIP, darkColor, Card.Value.SKIP_EVERYONE, Card.Side.LIGHT));
 
             // Two reverse cards per color and side
             cards.add(new Card(color, Card.Value.REVERSE, darkColor, Card.Value.REVERSE, Card.Side.LIGHT));

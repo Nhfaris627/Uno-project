@@ -108,12 +108,20 @@ public class GameController implements ActionListener, GameModelListener {
 
         // check if its wild because if it is we need to prompt for color
         if (playedCard.getColor() == Card.Color.WILD) {
-            Card.Color chosenColor = view.promptWildColor();
-            model.playCard(currentPlayer,cardIndex, chosenColor);
+            Card.Color chosenColor = null;
+            if (playedCard.getCurrentSide() == Card.Side.DARK) {
+                chosenColor = view.promptDarkWildColor();
+            } else {
+                chosenColor = view.promptWildColor();
+            }
+            if (chosenColor == null) {
+                view.showMessage("A color is required");
+            } else {
+                model.playCard(currentPlayer,cardIndex, chosenColor);
+            }
         }
         else {
             model.playCard(currentPlayer,cardIndex, null);
-
         }
     }
 
