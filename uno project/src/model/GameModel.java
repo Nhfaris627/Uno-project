@@ -662,7 +662,12 @@ public class GameModel {
 
         AIPlayer aiPlayer = (AIPlayer) currentPlayer;
 
-        //to add a delay later, omit for testing
+        // delay, remove this for testing
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         GameState state = getState();
 
