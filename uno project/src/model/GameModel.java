@@ -680,25 +680,19 @@ public class GameModel {
 
             // if drawn card playable
             if (drawnCard != null && isCardPlayable(drawnCard)) {
-                // AI will play the drawn card
-                cardIndex = currentPlayer.getHandSize() - 1;
+                // AI plays the drawn card at end of hand
+                int drawnCardIndex = aiPlayer.getHandSize() - 1;
 
-                // With MEDIUM/HARD difficulty, AI plays strategically
-                if (aiPlayer.selectCardToPlay(getState()) == cardIndex) {
-                    handleAICardPlay(aiPlayer, cardIndex);
-                } else {
-                    // AI doesnt play, end turn
-                    endTurn();
-                }
+                // AI decides whether to play drawn card
+                handleAICardPlay(aiPlayer, drawnCardIndex);
             } else {
-                // can not play card, end turn
+                // can't play drawn card, end turn
                 endTurn();
             }
         } else {
             // plays selected card
             handleAICardPlay(aiPlayer, cardIndex);
         }
-
     }
 
     /**
