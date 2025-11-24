@@ -664,7 +664,7 @@ public class GameModel {
 
         // delay, remove this for testing
         try {
-            Thread.sleep(500);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
