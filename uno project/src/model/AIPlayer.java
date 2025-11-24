@@ -205,4 +205,109 @@ public class AIPlayer extends Player {
 
         return state.players.get(nextIdx);
     }
+
+    /**
+     * gets most common colour in hand for wild card selection
+     * @return most common colour, or random color if hand empty
+     */
+    public Card.Color chooseWildColor() {
+        List<Card> hand = this.getHand();
+
+        int[] colorCounts = new int[4];
+
+        for (Card card : hand) {
+            switch (card.getColor()) {
+                case RED:
+                    colorCounts[0]++;
+                    break;
+                case BLUE:
+                    colorCounts[1]++;
+                    break;
+                case GREEN:
+                    colorCounts[2]++;
+                    break;
+                case YELLOW:
+                    colorCounts[3]++;
+                    break;
+                // Ignores WILD and dark side colors for now
+            }
+        }
+
+        // Find maxs
+        int maxCount = 0;
+        int maxIndex = 0;
+        for (int i = 0; i < 4; i++) {
+            if (colorCounts[i] > maxCount) {
+                maxCount = colorCounts[i];
+                maxIndex = i;
+            }
+        }
+
+        // if no colored cards, choose random
+        if (maxCount == 0) {
+            maxIndex = random.nextInt(4);
+        }
+
+        // Return  color
+        Card.Color[] colors = {Card.Color.RED, Card.Color.BLUE,
+                Card.Color.GREEN, Card.Color.YELLOW};
+        return colors[maxIndex];
+    }
+
+    /**
+     * choose color for wild draw color card
+     * @return dark side color (TEAL, PURPLE, PINK, ORANGE)
+     */
+    public Card.Color chooseWildDrawColor() {
+        List<Card> hand = this.getHand();
+
+        // dark side colors
+        int[] colorCounts = new int[4]; // TEAL, PURPLE, PINK, ORANGE
+
+        for (Card card : hand) {
+            switch (card.getColor()) {
+                case TEAL:
+                    colorCounts[0]++;
+                    break;
+                case PURPLE:
+                    colorCounts[1]++;
+                    break;
+                case PINK:
+                    colorCounts[2]++;
+                    break;
+                case ORANGE:
+                    colorCounts[3]++;
+                    break;
+            }
+        }
+
+        // Find max
+        int maxCount = 0;
+        int maxIndex = 0;
+        for (int i = 0; i < 4; i++) {
+            if (colorCounts[i] > maxCount) {
+                maxCount = colorCounts[i];
+                maxIndex = i;
+            }
+        }
+
+        // If no dark color cards, random
+        if (maxCount == 0) {
+            maxIndex = random.nextInt(4);
+        }
+
+        // rreturn color
+        Card.Color[] colors = {Card.Color.TEAL, Card.Color.PURPLE,
+                Card.Color.PINK, Card.Color.ORANGE};
+        return colors[maxIndex];
+    }
+
+    /**
+     * Checks if this player is an AI
+     * @return true (always, since this is an AI player), overrides Player
+     */
+    public boolean isAI() {
+        return true;
+    }
+
 }

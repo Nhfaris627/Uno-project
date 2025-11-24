@@ -101,6 +101,15 @@ public class Player {
     }
 
     /**
+     * Checks if this player is controlled by AI
+     * @return false for human players, overridden in AIPlayer class
+     * Added in version 2.0
+     */
+    public boolean isAI() {
+        return false;
+    }
+
+    /**
      * Displays the players hand with card indices
      */
 

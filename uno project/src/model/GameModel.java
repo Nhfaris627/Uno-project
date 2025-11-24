@@ -12,7 +12,8 @@ import controller.GameState;
  * 
  * @author Bhagya Patel, 101324150
  * @author Faris Hassan, 101300683
- * @version 2.0
+ * @author Nicky Fang, 101304731
+ * @version 3.0
  */
 
 public class GameModel {
@@ -628,4 +629,89 @@ public class GameModel {
 
         fireStateUpdated();
     }
+
+    /**
+     * Processes an AI player turn
+     * called after advancing to AI player
+     */
+    public void processAITurn() {
+        Player currentPlayer = players.get(currentPlayerIndex);
+
+        //check if player is of AIPlayer object (inheritance)
+        if (!(currentPlayer instanceof AIPlayer)) {
+            return;
+        }
+
+        AIPlayer aiPlayer = (AIPlayer) currentPlayer;
+
+        //to add a delay later, omit for testing
+
+        GameState state = getState();
+
+        // selects card to play
+        int cardIndex = aiPlayer.selectCardToPlay(state);
+
+        // if no playable card (returns -1), AI draws
+        if (cardIndex == -1) {
+            Card drawnCard = drawCard();
+
+            // if drawn card playable
+            if (drawnCard != null && isCardPlayable(drawnCard)) {
+                // AI will play the drawn card
+                cardIndex = currentPlayer.getHandSize() - 1;
+
+                // With MEDIUM/HARD difficulty, AI plays strategically
+                if (aiPlayer.selectCardToPlay(getState()) == cardIndex) {
+                    handleAICardPlay(aiPlayer, cardIndex);
+                } else {
+                    // AI doesnt play, end turn
+                    endTurn();
+                }
+            } else {
+                // can not play card, end turn
+                endTurn();
+            }
+        } else {
+            // plays selected card
+            handleAICardPlay(aiPlayer, cardIndex);
+        }
+
+    }
+
+    /**
+     * Handles AI playing a card, including wild color selection
+     */
+    private void handleAICardPlay(AIPlayer aiPlayer, int cardIndex) {
+        Card playedCard = aiPlayer.getHand().get(cardIndex);
+        Card.Color chosenColor = null;
+
+        // AI chooses color for wild cards
+        if (playedCard.getColor() == Card.Color.WILD) {
+            if (playedCard.getValue() == Card.Value.WILD ||
+                    playedCard.getValue() == Card.Value.WILD_DRAW_TWO) {
+                chosenColor = aiPlayer.chooseWildColor();
+            } else if (playedCard.getValue() == Card.Value.WILD_DRAW_COLOR) {
+                chosenColor = aiPlayer.chooseWildDrawColor();
+            }
+        }
+
+        // Play card
+        playCard(aiPlayer, cardIndex, chosenColor);
+
+        // Check if game should continue (not ended by round/game win)
+        if (aiPlayer.getHandSize() > 0) {
+            // For Skip Everyone card, AI gets another turn
+            if (playedCard.getValue() == Card.Value.SKIP_EVERYONE) {
+                currentTurnTaken = false;
+                fireStateUpdated();
+                // Process another AI turn immediately
+                processAITurn();
+            } else {
+                endTurn();
+            }
+        }
+    }
+
+
+
 }
