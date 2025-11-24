@@ -29,7 +29,22 @@ public class Main {
                 return;
             }
 
-            GameModel model = new GameModel(count, isAI);
+            // check if AI players exist
+            boolean hasAI = false;
+            for (boolean ai : isAI) {
+                if (ai) {
+                    hasAI = true;
+                    break;
+                }
+            }
+
+            // if there are AI players, ask for difficulty
+            AIPlayer.DifficultyLevel difficulty = AIPlayer.DifficultyLevel.MEDIUM;
+            if (hasAI) {
+                difficulty = view.promptAIDifficulty(frame);
+            }
+
+            GameModel model = new GameModel(count, isAI, difficulty);
             GameController controller = new GameController(model, view);
             view.bindController(controller);
 
