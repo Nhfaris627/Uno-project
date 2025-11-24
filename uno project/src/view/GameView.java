@@ -11,7 +11,7 @@ import controller.GameController;
 import controller.GameState;
 import model.Card;
 import model.Player;
-
+import model.AIPlayer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -387,5 +387,29 @@ public final class GameView {
         }
 
         return isAI;
+    }
+
+    /**
+     * promopt user to select AI difficulty
+     * @param parent Parent component
+     * @return Selected difficulty level, or MEDIUM if cancelled
+     */
+    public AIPlayer.DifficultyLevel promptAIDifficulty(Component parent) {
+        Object[] options = {"Easy", "Medium", "Hard"};
+        int choice = JOptionPane.showOptionDialog(
+                parent,
+                "Select AI difficulty:",
+                "AI Difficulty",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]); // default medium
+
+        switch (choice) {
+            case 0: return AIPlayer.DifficultyLevel.EASY;
+            case 2: return AIPlayer.DifficultyLevel.HARD;
+            default: return AIPlayer.DifficultyLevel.MEDIUM;
+        }
     }
 }

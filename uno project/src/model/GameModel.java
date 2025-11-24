@@ -34,7 +34,7 @@ public class GameModel {
      * @param playerCount Number of players (2-4)
      */
     public GameModel(int playerCount) {
-        this(playerCount, new boolean[playerCount]); // All false = all human
+        this(playerCount, new boolean[playerCount] , AIPlayer.DifficultyLevel.MEDIUM); // All false = all human
     }
 
     /**
@@ -44,7 +44,7 @@ public class GameModel {
      * @param playerCount List of player names (must be 2-4 players)
      * @throws IllegalArgumentException if player count is not between 2 and 4
      */
-    public GameModel(int playerCount, boolean[] isAI) {
+    public GameModel(int playerCount, boolean[] isAI, AIPlayer.DifficultyLevel difficultyLevel) {
         if (playerCount == 0 || playerCount < 2 || playerCount > 4) {
             throw new IllegalArgumentException("Game requires 2-4 players");
         }
@@ -58,7 +58,7 @@ public class GameModel {
             Player player;
             if (isAI != null && isAI[i]) {
                 // create AI player with medium difficulty
-                player = new AIPlayer("AI Player " + (i + 1), AIPlayer.DifficultyLevel.MEDIUM);
+                player = new AIPlayer("AI Player " + (i + 1), difficultyLevel);
             } else {
                 player = new Player("Player " + (i + 1));
             }
