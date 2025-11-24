@@ -209,7 +209,12 @@ public final class GameView {
 
         //build hand section panel
         handStrip.removeAll();
-        handStrip.add(wrapLeft(nextBtn));
+
+        // Only show buttons for human players
+        boolean isAIPlayer = s.currentPlayer.isAI();
+        if (!isAIPlayer) {
+            handStrip.add(wrapLeft(nextBtn));
+        }
 
         //fill the hand strip with cards from the players' hand
         List<Card> hand = s.currentPlayer.getHand();
@@ -230,7 +235,8 @@ public final class GameView {
             handStrip.add(Box.createHorizontalStrut(16));
             handStrip.add(cardBtn);
 
-            if (s.turnTaken) {
+            //disable cards for ai players or if turn is taken
+            if (s.turnTaken || isAIPlayer) {
                 cardBtn.setEnabled(false);
             }
 
@@ -239,15 +245,21 @@ public final class GameView {
         }
 
         handStrip.add(Box.createHorizontalGlue());
-        handStrip.add(wrapRight(drawBtn));
+
+        // only show draw button for human players
+        if (!isAIPlayer) {
+            handStrip.add(wrapRight(drawBtn));
+        }
 
         handStrip.revalidate();
         handStrip.repaint();
 
-        //set button playability
-        boolean hasPlayable = !s.playableIndices.isEmpty();
-        drawBtn.setEnabled(!s.turnTaken && !hasPlayable);
-        nextBtn.setEnabled(s.turnTaken);
+        //set button playability - only matters for human players
+        if (!isAIPlayer) {
+            boolean hasPlayable = !s.playableIndices.isEmpty();
+            drawBtn.setEnabled(!s.turnTaken && !hasPlayable);
+            nextBtn.setEnabled(s.turnTaken);
+        }
 
         //scoreboard info
         StringBuilder sb = new StringBuilder("Scoreboard:\n");
