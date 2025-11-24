@@ -30,20 +30,38 @@ public class GameModel {
     private Card.Side currentSide = Card.Side.LIGHT;  // Track which side is active
 
     /**
+     * Creates a new GameModel with specified player count (all human players)
+     * @param playerCount Number of players (2-4)
+     */
+    public GameModel(int playerCount) {
+        this(playerCount, new boolean[playerCount]); // All false = all human
+    }
+
+    /**
      * Creates a new model.GameModel with specified player names.
      * initializes the deck, discard pile. and sets up the game state.
      *
      * @param playerCount List of player names (must be 2-4 players)
      * @throws IllegalArgumentException if player count is not between 2 and 4
      */
-    public GameModel(int playerCount) {
+    public GameModel(int playerCount, boolean[] isAI) {
         if (playerCount == 0 || playerCount < 2 || playerCount > 4) {
             throw new IllegalArgumentException("Game requires 2-4 players");
         }
 
+        if (isAI != null && isAI.length != playerCount) {
+            throw new IllegalArgumentException("isAI array must match player count");
+        }
+
         this.players = new ArrayList<>();
         for (int i = 0; i < playerCount; i++) {
-            Player player = new Player("Player " + (i + 1));
+            Player player;
+            if (isAI != null && isAI[i]) {
+                // create AI player with medium difficulty
+                player = new AIPlayer("AI Player " + (i + 1), AIPlayer.DifficultyLevel.MEDIUM);
+            } else {
+                player = new Player("Player " + (i + 1));
+            }
             this.players.add(player);
         }
 
