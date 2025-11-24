@@ -5,6 +5,7 @@ import model.GameModel;
 import model.Player;
 import view.GameView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,8 +17,8 @@ import java.awt.event.ActionListener;
  * @author Nicky Fang 101304731
  *
  * @author Bhagya Patel 101324150
- * @version 2
- * @brief added methods and restructured method parameters
+ * @version 3.0
+ * @brief added methods to support ai players
  *
  */
 public class GameController implements ActionListener, GameModelListener {
@@ -145,6 +146,8 @@ public class GameController implements ActionListener, GameModelListener {
     public void onGameInitialized(GameState state) {
         view.render(state);
         view.showMessage("Game started! " + state.currentPlayer.getName() + " goes first.");
+        //if first player is an ai
+        if (state.currentPlayer.isAI()) model.checkAndProcessAITurn();
     }
 
     /**
@@ -157,6 +160,8 @@ public class GameController implements ActionListener, GameModelListener {
     public void onModelInit(GameState state) {
         view.render(state);
         view.showMessage("Game started! " + state.currentPlayer.getName() + " goes first.");
+
+        if (state.currentPlayer.isAI()) model.checkAndProcessAITurn();
     }
 
 
@@ -175,6 +180,9 @@ public class GameController implements ActionListener, GameModelListener {
     @Override
     public void onTurnAdvanced(Player current, GameState state) {
         view.render(state);
+
+        if (current.isAI()) model.checkAndProcessAITurn();
+
     }
 
     /**

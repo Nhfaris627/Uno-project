@@ -730,6 +730,13 @@ public class GameModel {
         }
     }
 
-
-
+    /**
+     * check if current player is AI and processes turn
+     */
+    public void checkAndProcessAITurn() {
+        Player currentPlayer = players.get(currentPlayerIndex);
+        if (currentPlayer instanceof AIPlayer) {
+            processAITurn();
+        }
+    }
 }
