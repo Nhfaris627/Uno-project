@@ -109,6 +109,28 @@ public final class GameView {
         nextBtn.addActionListener(c);
     }
 
+    private String getPath(Card c) {
+        String resourcePath = "";
+        Card.Value value = c.getValue();
+        Card.Color color = c.getColor();
+        Card.Side side = c.getCurrentSide();
+
+
+        if (side == Card.Side.LIGHT) {
+            resourcePath = "view/unoCards/";
+        } else {
+            resourcePath = "view/DarkSideCards/";
+        }
+
+        if (value == Card.Value.WILD || value == Card.Value.WILD_DRAW_TWO || value == Card.Value.WILD_DRAW_COLOR) {
+            resourcePath += value + "/" + value + ".png";
+        } else {
+            resourcePath += value + "/" + color + ".png";
+        }
+
+        return resourcePath;
+    }
+
     /**
      * Get an imageicon from the card directory, and scale it to specified x and y
      * @param c The card to get icon
@@ -123,11 +145,7 @@ public final class GameView {
         String value = c.getValue().toString().toLowerCase();
         String color = c.getColor().toString().toLowerCase();
 
-        if (c.getValue() == Card.Value.WILD || c.getValue() == Card.Value.WILD_DRAW_TWO) {
-            resourcePath = "view/unoCards/" + value + "/" + value + ".png";
-        } else {
-            resourcePath = "view/unoCards/" + value + "/" + color + ".png";
-        }
+        resourcePath = getPath(c);
 
         System.out.println("Trying to load: " + resourcePath);
 
