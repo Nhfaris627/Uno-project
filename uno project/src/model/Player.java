@@ -10,7 +10,7 @@ import java.util.List;
  * @author Faris Hassan 101300683
  * @author Ivan Arkhipov 101310636
  * @author Nicky Fang 101304731
- * @version 1.0
+ * @version 2.0 - Additional modifications to support polymorphism (AI players)
  */
 
 public class Player {
