@@ -147,7 +147,11 @@ public class GameController implements ActionListener, GameModelListener {
         view.render(state);
         view.showMessage("Game started! " + state.currentPlayer.getName() + " goes first.");
         //if first player is an ai
-        if (state.currentPlayer.isAI()) model.checkAndProcessAITurn();
+        if (state.currentPlayer.isAI()) {
+            SwingUtilities.invokeLater(() -> {
+                model.checkAndProcessAITurn();
+            });
+        }
     }
 
     /**
@@ -161,7 +165,11 @@ public class GameController implements ActionListener, GameModelListener {
         view.render(state);
         view.showMessage("Game started! " + state.currentPlayer.getName() + " goes first.");
 
-        if (state.currentPlayer.isAI()) model.checkAndProcessAITurn();
+        if (state.currentPlayer.isAI()) {
+            SwingUtilities.invokeLater(() -> {
+                model.checkAndProcessAITurn();
+            });
+        }
     }
 
 
@@ -181,7 +189,11 @@ public class GameController implements ActionListener, GameModelListener {
     public void onTurnAdvanced(Player current, GameState state) {
         view.render(state);
 
-        if (current.isAI()) model.checkAndProcessAITurn();
+        if (current.isAI()) {
+            SwingUtilities.invokeLater(() -> {
+                model.checkAndProcessAITurn();
+            });
+        }
 
     }
 

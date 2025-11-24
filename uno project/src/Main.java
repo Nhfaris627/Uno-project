@@ -29,7 +29,7 @@ public class Main {
                 return;
             }
 
-            GameModel model = new GameModel(count);
+            GameModel model = new GameModel(count, isAI);
             GameController controller = new GameController(model, view);
             view.bindController(controller);
 
