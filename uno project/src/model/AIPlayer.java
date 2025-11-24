@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Represents AI-controlled player in UNO game.
+ * Represents AI controlled player in UNO game.
  * Implements a strategy based approach to card selection based on difficulty selected
  *
  * @author Nicky Fang 101304731
@@ -52,6 +52,8 @@ public class AIPlayer extends Player {
                 return selectRandomCard(playableIndices);
             case MEDIUM:
                 return selectWithBasicStrategy(playableIndices, state);
+            case HARD:
+                return selectWithAdvancedStrategy(playableIndices, state);
             default:
                 return selectRandomCard(playableIndices);
         }
@@ -112,6 +114,65 @@ public class AIPlayer extends Player {
     }
 
     /**
+     * Selects card using advanced strategy
+     * (HARD difficulty)
+     * 1. Save wild cards for when needed
+     * 2. Consider next player's hand size
+     * 3. Maintain color control
+     * 4. strategic use of action cards
+     */
+    private int selectWithAdvancedStrategy(List<Integer> playableIndices, GameState state) {
+        List<Card> hand = this.getHand();
+        Card topCard = state.topDiscard;
+
+        // Get next player info
+        Player nextPlayer = getNextPlayer(state);
+        boolean nextPlayerLowCards = (nextPlayer != null && nextPlayer.getHandSize() <= 2);
+
+        // If next player is close to winning, disrupts them
+        if (nextPlayerLowCards) {
+
+            // make next player draw cards or skip
+            for (int idx : playableIndices) {
+
+                Card card = hand.get(idx);
+                Card.Value value = card.getValue();
+                if (value == Card.Value.DRAW_ONE ||
+                        value == Card.Value.DRAW_FIVE ||
+                        value == Card.Value.WILD_DRAW_TWO ||
+                        value == Card.Value.WILD_DRAW_COLOR ||
+                        value == Card.Value.SKIP ||
+                        value == Card.Value.SKIP_EVERYONE) {
+                    return idx;
+                }
+            }
+        }
+
+        // save wild cards unless necessary
+        boolean hasNonWildPlayable = false;
+        for (int idx : playableIndices) {
+            if (hand.get(idx).getColor() != Card.Color.WILD) {
+                hasNonWildPlayable = true;
+                break;
+            }
+        }
+
+        // if ai has non wild options, use basic strategy but exclude wilds
+        if (hasNonWildPlayable) {
+            List<Integer> nonWildIndices = new java.util.ArrayList<>();
+            for (int idx : playableIndices) {
+                if (hand.get(idx).getColor() != Card.Color.WILD) {
+                    nonWildIndices.add(idx);
+                }
+            }
+            return selectWithBasicStrategy(nonWildIndices, state);
+        }
+
+        // otherwise use basic strategy with all cards
+        return selectWithBasicStrategy(playableIndices, state);
+    }
+
+    /**
      * helper method to check if card is special
      */
     private boolean isSpecialCard(Card card) {
@@ -125,5 +186,23 @@ public class AIPlayer extends Player {
                 value == Card.Value.DRAW_FIVE ||
                 value == Card.Value.SKIP_EVERYONE ||
                 value == Card.Value.WILD_DRAW_COLOR;
+    }
+
+    /**
+     * helper method that gets the next player in turn order
+     * this is used in advanced ai model
+     */
+    private Player getNextPlayer(GameState state) {
+        int currentIdx = state.players.indexOf(state.currentPlayer);
+        int nextIdx;
+
+        //check if clockwise or anticlockwise
+        if (state.clockwise) {
+            nextIdx = (currentIdx + 1) % state.players.size();
+        } else {
+            nextIdx = (currentIdx - 1 + state.players.size()) % state.players.size();
+        }
+
+        return state.players.get(nextIdx);
     }
 }
