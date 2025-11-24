@@ -1,7 +1,9 @@
-package view; /**
+package view;
+/**
  * The view for the uno GUI
  *
  * @author Ivan Arkhipov 101310636
+ * @author Nicky Fang 101304731
  * @version 1.0
  */
 
@@ -207,7 +209,12 @@ public final class GameView {
 
         //build hand section panel
         handStrip.removeAll();
-        handStrip.add(wrapLeft(nextBtn));
+
+        // Only show buttons for human players
+        boolean isAIPlayer = s.currentPlayer.isAI();
+        if (!isAIPlayer) {
+            handStrip.add(wrapLeft(nextBtn));
+        }
 
         //fill the hand strip with cards from the players' hand
         List<Card> hand = s.currentPlayer.getHand();
@@ -228,7 +235,8 @@ public final class GameView {
             handStrip.add(Box.createHorizontalStrut(16));
             handStrip.add(cardBtn);
 
-            if (s.turnTaken) {
+            //disable cards for ai players or if turn is taken
+            if (s.turnTaken || isAIPlayer) {
                 cardBtn.setEnabled(false);
             }
 
@@ -237,15 +245,21 @@ public final class GameView {
         }
 
         handStrip.add(Box.createHorizontalGlue());
-        handStrip.add(wrapRight(drawBtn));
+
+        // only show draw button for human players
+        if (!isAIPlayer) {
+            handStrip.add(wrapRight(drawBtn));
+        }
 
         handStrip.revalidate();
         handStrip.repaint();
 
-        //set button playability
-        boolean hasPlayable = !s.playableIndices.isEmpty();
-        drawBtn.setEnabled(!s.turnTaken && !hasPlayable);
-        nextBtn.setEnabled(s.turnTaken);
+        //set button playability - only matters for human players
+        if (!isAIPlayer) {
+            boolean hasPlayable = !s.playableIndices.isEmpty();
+            drawBtn.setEnabled(!s.turnTaken && !hasPlayable);
+            nextBtn.setEnabled(s.turnTaken);
+        }
 
         //scoreboard info
         StringBuilder sb = new StringBuilder("Scoreboard:\n");
@@ -323,5 +337,55 @@ public final class GameView {
                 options[0]);
         if (choice == null) return -1;
         return (Integer) choice;
+    }
+
+    /**
+     * prompt user to select which players are human vs AI
+     * @param parent parent component
+     * @param playerCount a,mount of players in game
+     * @return Array where true = AI, false = Human, or null for error
+     */
+    public boolean[] promptPlayerTypes(Component parent, int playerCount) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel instruction = new JLabel("Select player types:");
+        instruction.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(instruction);
+        panel.add(Box.createVerticalStrut(10));
+
+        JCheckBox[] checkboxes = new JCheckBox[playerCount];
+
+        for (int i = 0; i < playerCount; i++) {
+            checkboxes[i] = new JCheckBox("Player " + (i + 1) + " is AI");
+            checkboxes[i].setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            // player 1 is human, others AI
+            if (i > 0) {
+                checkboxes[i].setSelected(true);
+            }
+
+            panel.add(checkboxes[i]);
+            panel.add(Box.createVerticalStrut(5));
+        }
+
+        int result = JOptionPane.showConfirmDialog(
+                parent,
+                panel,
+                "Player Setup",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return null;
+        }
+
+        boolean[] isAI = new boolean[playerCount];
+        for (int i = 0; i < playerCount; i++) {
+            isAI[i] = checkboxes[i].isSelected();
+        }
+
+        return isAI;
     }
 }

@@ -662,7 +662,12 @@ public class GameModel {
 
         AIPlayer aiPlayer = (AIPlayer) currentPlayer;
 
-        //to add a delay later, omit for testing
+        // delay, remove this for testing
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         GameState state = getState();
 
@@ -730,6 +735,13 @@ public class GameModel {
         }
     }
 
-
-
+    /**
+     * check if current player is AI and processes turn
+     */
+    public void checkAndProcessAITurn() {
+        Player currentPlayer = players.get(currentPlayerIndex);
+        if (currentPlayer instanceof AIPlayer) {
+            processAITurn();
+        }
+    }
 }
