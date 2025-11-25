@@ -416,12 +416,6 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
 1. **Deck Exhaustion**: If deck runs out before round ends, game may stall
     - *Planned Fix*: Implement discard pile reshuffling
 
-2. **AI Thinking Time**: No artificial delay, AI plays instantly
-    - *Status*: Could add 1-second delay for better UX
-
-3. **Multiple AI Players**: All AI players play rapidly in sequence
-    - *Status*: Works correctly, could add visual feedback between turns
-
 ### Resolved Issues (from Milestone 2)
 - ✅ Multiple Rounds: Fixed with `newRound()` method
 - ✅ REVERSE in 2-Player: Properly implemented as skip
