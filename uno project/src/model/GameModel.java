@@ -148,8 +148,14 @@ public class GameModel {
         }
 
         // Handle special card effects
-        handleSpecialCard(playedCard);
-        currentTurnTaken = true;
+        if (playedCard.getValue() != Card.Value.SKIP &&
+                playedCard.getValue() != Card.Value.DRAW_ONE &&
+                playedCard.getValue() != Card.Value.WILD_DRAW_TWO &&
+                playedCard.getValue() != Card.Value.DRAW_FIVE &&
+                playedCard.getValue() != Card.Value.WILD_DRAW_COLOR &&
+                !(playedCard.getValue() == Card.Value.REVERSE && players.size() == 2)) {
+            currentTurnTaken = true;
+        }
         fireStateUpdated();
     }
 
@@ -343,7 +349,9 @@ public class GameModel {
     private void handleSpecialCard(Card playedCard) {
         switch (playedCard.getValue()) {
             case SKIP:
-                advanceToNextPlayer(); // Skip next player
+                advanceToNextPlayer();
+                currentTurnTaken = false;
+                fireTurnAdvanced(players.get(currentPlayerIndex));
                 break;
 
             case REVERSE:
@@ -351,6 +359,8 @@ public class GameModel {
                 if (players.size() == 2) {
                     // In 2-player game, reverse acts like skip
                     advanceToNextPlayer();
+                    currentTurnTaken = false;
+                    fireTurnAdvanced(players.get(currentPlayerIndex));
                 }
                 break;
 
@@ -361,6 +371,8 @@ public class GameModel {
                 if (drawn != null) {
                     drawOneTarget.drawCard(drawn);
                 }
+                currentTurnTaken = false;
+                fireTurnAdvanced(players.get(currentPlayerIndex));
                 break;
 
             case WILD_DRAW_TWO:
@@ -372,6 +384,8 @@ public class GameModel {
                         drawTwoTarget.drawCard(drawnCard);
                     }
                 }
+                currentTurnTaken = false;
+                fireTurnAdvanced(players.get(currentPlayerIndex));
                 break;
 
             case WILD:
@@ -384,6 +398,8 @@ public class GameModel {
 
             case DRAW_FIVE:
                 handleDrawFive();
+                currentTurnTaken = false;
+                fireTurnAdvanced(players.get(currentPlayerIndex));
                 break;
 
             case SKIP_EVERYONE:
@@ -392,6 +408,8 @@ public class GameModel {
 
             case WILD_DRAW_COLOR:
                 handleWildDrawColor(playedCard);
+                currentTurnTaken = false;
+                fireTurnAdvanced(players.get(currentPlayerIndex));
                 break;
 
             default:
@@ -441,8 +459,6 @@ public class GameModel {
                 break;
             }
         }
-        // Skip the target player's turn
-        advanceToNextPlayer();
     }
 
     /**
@@ -492,9 +508,6 @@ public class GameModel {
             }
 
         } while (drawnCard != null && drawnCard.getColor() != targetColor);
-
-        // Skip the target player's turn
-        advanceToNextPlayer();
     }
 
 
@@ -663,36 +676,24 @@ public class GameModel {
         AIPlayer aiPlayer = (AIPlayer) currentPlayer;
 
         // delay, remove this for testing
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        javax.swing.Timer timer = new javax.swing.Timer(3000, e -> {
+            GameState state = getState();
+            int cardIndex = aiPlayer.selectCardToPlay(state);
 
-        GameState state = getState();
-
-        // selects card to play
-        int cardIndex = aiPlayer.selectCardToPlay(state);
-
-        // if no playable card (returns -1), AI draws
-        if (cardIndex == -1) {
-            Card drawnCard = drawCard();
-
-            // if drawn card playable
-            if (drawnCard != null && isCardPlayable(drawnCard)) {
-                // AI plays the drawn card at end of hand
-                int drawnCardIndex = aiPlayer.getHandSize() - 1;
-
-                // AI decides whether to play drawn card
-                handleAICardPlay(aiPlayer, drawnCardIndex);
+            if (cardIndex == -1) {
+                Card drawnCard = drawCard();
+                if (drawnCard != null && isCardPlayable(drawnCard)) {
+                    int drawnCardIndex = aiPlayer.getHandSize() - 1;
+                    handleAICardPlay(aiPlayer, drawnCardIndex);
+                } else {
+                    endTurn();
+                }
             } else {
-                // can't play drawn card, end turn
-                endTurn();
+                handleAICardPlay(aiPlayer, cardIndex);
             }
-        } else {
-            // plays selected card
-            handleAICardPlay(aiPlayer, cardIndex);
-        }
+        });
+        timer.setRepeats(false); // Only fire once
+        timer.start();
     }
 
     /**
