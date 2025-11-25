@@ -310,4 +310,8 @@ public class AIPlayer extends Player {
         return true;
     }
 
+    public DifficultyLevel getDifficultyLevel() {
+        return difficulty;
+    }
+
 }
