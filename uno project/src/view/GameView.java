@@ -40,6 +40,8 @@ public final class GameView {
     private final JScrollPane handScroll = new JScrollPane(handStrip);
     private final JButton nextBtn = new JButton("Next");
     private final JButton drawBtn = new JButton("Draw Card");
+    private final JButton undoBtn = new JButton("Undo");
+    private final JButton redoBtn = new JButton("Redo");
 
     //scoreboard
     private final JTextArea scoreArea = new JTextArea(3, 30);
@@ -82,6 +84,9 @@ public final class GameView {
         //set action commands for controller
         nextBtn.setActionCommand("NEXT");
         drawBtn.setActionCommand("DRAW");
+
+        undoBtn.setActionCommand("UNDO");
+        redoBtn.setActionCommand("REDO");
     }
 
     /**
@@ -109,6 +114,8 @@ public final class GameView {
         this.controller = c;
         drawBtn.addActionListener(c);
         nextBtn.addActionListener(c);
+        undoBtn.addActionListener(c);
+        redoBtn.addActionListener(c);
     }
 
     private String getPath(Card c) {
@@ -213,7 +220,12 @@ public final class GameView {
         // Only show buttons for human players
         boolean isAIPlayer = s.currentPlayer.isAI();
         if (!isAIPlayer) {
-            handStrip.add(wrapLeft(nextBtn));
+            JPanel leftButtons = new JPanel();
+            leftButtons.setLayout(new BoxLayout(leftButtons, BoxLayout.Y_AXIS));
+            leftButtons.add(wrapLeft(nextBtn));
+            leftButtons.add(Box.createVerticalStrut(5));
+            leftButtons.add(wrapLeft(undoBtn));
+            handStrip.add(leftButtons);
         }
 
         //fill the hand strip with cards from the players' hand
@@ -248,7 +260,12 @@ public final class GameView {
 
         // only show draw button for human players
         if (!isAIPlayer) {
-            handStrip.add(wrapRight(drawBtn));
+            JPanel rightButtons = new JPanel();
+            rightButtons.setLayout(new BoxLayout(rightButtons, BoxLayout.Y_AXIS));
+            rightButtons.add(wrapRight(drawBtn));
+            rightButtons.add(Box.createVerticalStrut(5));
+            rightButtons.add(wrapRight(redoBtn));
+            handStrip.add(rightButtons);
         }
 
         handStrip.revalidate();
@@ -411,5 +428,12 @@ public final class GameView {
             case 2: return AIPlayer.DifficultyLevel.HARD;
             default: return AIPlayer.DifficultyLevel.MEDIUM;
         }
+    }
+
+    public void setRedoEnabled(boolean enabled) {
+    }
+
+    public void setUndoEnabled(boolean enabled) {
+
     }
 }

@@ -67,6 +67,10 @@ public class GameController implements ActionListener, GameModelListener {
             else if (command.equals("NEXT"))
             {
                 onEndTurn();
+            } else if (command.equals("UNDO")) {
+                onUndo();
+            } else if (command.equals("REDO")) {
+                onRedo();
             }
             //this is only used during development in case a new command is added but not implemented here
             else
@@ -180,6 +184,8 @@ public class GameController implements ActionListener, GameModelListener {
     @Override
     public void onStateUpdated(GameState state) {
         view.render(state);
+        view.setUndoEnabled(model.canUndo());
+        view.setRedoEnabled(model.canRedo());
     }
 
     /**
@@ -197,6 +203,13 @@ public class GameController implements ActionListener, GameModelListener {
 
     }
 
+    public void onUndo() {
+        model.undo();
+    }
+
+    public void onRedo() {
+        model.redo();
+    }
     /**
      * Called when a player wins round
      */

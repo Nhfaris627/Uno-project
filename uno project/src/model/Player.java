@@ -78,6 +78,7 @@ public class Player {
         this.score += points;
     }
 
+    public void setScore(int points) { this.score = points; }
     /**
      * Calculates the total point value of all cards in hand
      * @return The sum of point values of all cards

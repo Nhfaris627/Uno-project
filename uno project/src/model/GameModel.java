@@ -28,6 +28,8 @@ public class GameModel {
     private static final int INITIAL_HAND_SIZE = 7;
     private boolean currentTurnTaken = false;
     private Card.Side currentSide = Card.Side.LIGHT;  // Track which side is active
+    private Stack<GameState> undoStack = new Stack<>();
+    private Stack<GameState> redoStack = new Stack<>();
 
     /**
      * Creates a new GameModel with specified player count (all human players)
@@ -70,6 +72,8 @@ public class GameModel {
         this.currentPlayerIndex = 0;
         this.isClockwise = true;
         this.listeners = new ArrayList<>();
+        this.undoStack = new Stack<GameState>();
+        this.redoStack = new Stack<GameState>();
     }
 
     /**
@@ -110,6 +114,7 @@ public class GameModel {
      * @param chosenColor Color chosen for wild cards (null for non-wild cards)
      */
     public void playCard(Player player, int handIndex, Card.Color chosenColor) {
+        saveStateOnMove();
         Player currentPlayer = players.get(currentPlayerIndex);
 
         if (handIndex < 0 || handIndex >= currentPlayer.getHandSize()) {
@@ -159,6 +164,7 @@ public class GameModel {
      * @return The drawn card, or null if deck is empty
      */
     public Card drawCard() {
+        saveStateOnMove();
         Player currentPlayer = players.get(currentPlayerIndex);
 
         Card drawnCard = deck.drawCard();
@@ -178,6 +184,7 @@ public class GameModel {
      * Ends the current player's turn and advances to the next player.
      */
     public void endTurn() {
+        saveStateOnMove();
         advanceToNextPlayer();
         currentTurnTaken = false;
         fireTurnAdvanced(players.get(currentPlayerIndex));
@@ -605,14 +612,37 @@ public class GameModel {
     public GameState getState()
     {
         GameState state = new GameState();
-        state.players = new ArrayList<>(players);
-        state.currentPlayer = players.get(currentPlayerIndex);
-        state.topDiscard = getTopDiscardCard();
+
+        // DEEP COPY players - create NEW Player objects with copied hands
+        state.players = new ArrayList<>();
+        for (Player original : players) {
+            Player copy = original instanceof AIPlayer
+                    ? new AIPlayer(original.getName(), ((AIPlayer) original).getDifficultyLevel())
+                    : new Player(original.getName());
+            copy.setScore(original.getScore());
+
+            // Deep copy hand cards
+            for (Card card : original.getHand()) {
+                Card cardCopy = new Card(card.getColor(), card.getValue());
+                if (card.getCurrentSide() == Card.Side.DARK) {
+                    cardCopy.flip();
+                }
+                copy.drawCard(cardCopy);
+            }
+            state.players.add(copy);
+        }
+
+        state.currentPlayer = state.players.get(currentPlayerIndex);
+        state.topDiscard = getTopDiscardCard() != null ? new Card(getTopDiscardCard().getColor(), getTopDiscardCard().getValue()) : null;
+        if (getTopDiscardCard().getCurrentSide() == Card.Side.DARK) {
+            state.topDiscard.flip();
+        }
         state.deckSize = deck.size();
         state.playableIndices = getPlayableIndices();
         state.clockwise = isClockwise;
         state.turnTaken = currentTurnTaken;
-        state.currentSide = currentSide;  // Include current side
+        state.currentSide = currentSide;
+
         return state;
     }
 
@@ -699,6 +729,7 @@ public class GameModel {
      * Handles AI playing a card, including wild color selection
      */
     private void handleAICardPlay(AIPlayer aiPlayer, int cardIndex) {
+        saveStateOnMove();
         Card playedCard = aiPlayer.getHand().get(cardIndex);
         Card.Color chosenColor = null;
 
@@ -737,5 +768,70 @@ public class GameModel {
         if (currentPlayer instanceof AIPlayer) {
             processAITurn();
         }
+    }
+
+    private void saveStateOnMove() {
+        undoStack.push(getState());
+        redoStack.clear();
+    }
+
+    public void undo() {
+        if (!undoStack.isEmpty()) {
+            redoStack.push(getState());
+            GameState prev = undoStack.pop();
+            restoreState(prev);
+            fireStateUpdated();
+        }
+    }
+
+    public void redo() {
+        if (!redoStack.isEmpty()) {
+            undoStack.push(getState());
+            GameState next = redoStack.pop();
+            restoreState(next);
+            fireStateUpdated();
+        }
+    }
+
+    private void restoreState(GameState state) {
+        // Restore primitive fields
+        this.currentPlayerIndex = this.players.indexOf(state.currentPlayer);
+        this.isClockwise = state.clockwise;
+        this.currentTurnTaken = state.turnTaken;
+        this.currentSide = state.currentSide;
+
+        // Restore player hands from deep-copied snapshot
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            player.getHand().clear();
+
+            Player snapshotPlayer = state.players.get(i);
+            for (Card snapshotCard : snapshotPlayer.getHand()) {
+                Card restoredCard = new Card(snapshotCard.getColor(), snapshotCard.getValue());
+                if (snapshotCard.getCurrentSide() == Card.Side.DARK) {
+                    restoredCard.flip();
+                }
+                player.drawCard(restoredCard);
+            }
+            player.setScore(snapshotPlayer.getScore());
+        }
+
+        // Discard pile: clear and restore top card only
+        discardPile.clear();
+        if (state.topDiscard != null) {
+            Card topCopy = new Card(state.topDiscard.getColor(), state.topDiscard.getValue());
+            if (state.topDiscard.getCurrentSide() == Card.Side.DARK) {
+                topCopy.flip();
+            }
+            discardPile.add(topCopy);
+        }
+    }
+
+    public boolean canUndo() {
+        return !undoStack.isEmpty();
+    }
+
+    public boolean canRedo() {
+        return !redoStack.isEmpty();
     }
 }
