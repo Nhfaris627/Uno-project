@@ -481,10 +481,13 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * method to get the current gamestate using deep copies
+     * @return the gamestate
+     */
     public GameState getState() {
         GameState state = new GameState();
 
-        // DEEP COPY PLAYERS with DEEP COPY CARDS
         state.players = new ArrayList<>();
         for (Player original : players) {
             Player copy;
@@ -496,14 +499,13 @@ public class GameModel implements Serializable {
             }
             copy.setScore(original.getScore());
 
-            // DEEP COPY HAND CARDS - CAPTURE FLIP STATE
             for (Card originalCard : original.getHand()) {
                 Card cardCopy = new Card(
                         originalCard.getLightColor(),
                         originalCard.getLightValue(),
                         originalCard.getDarkColor(),
                         originalCard.getDarkValue(),
-                        originalCard.getCurrentSide()  // CRITICAL: Preserve side
+                        originalCard.getCurrentSide()
                 );
                 copy.drawCard(cardCopy);
             }
@@ -513,7 +515,6 @@ public class GameModel implements Serializable {
         state.currentPlayerIndex = currentPlayerIndex;
         state.currentPlayer = state.players.get(currentPlayerIndex);
 
-        // DEEP COPY topDiscard
         Card top = getTopDiscardCard();
         state.topDiscard = (top != null) ? new Card(
                 top.getLightColor(), top.getLightValue(),
@@ -625,11 +626,17 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * save the game state whenever a move is made
+     */
     private void saveStateOnMove() {
         undoStack.push(getState());
         redoStack.clear();
     }
 
+    /**
+     * pops off the undo stack when undo is pressed
+     */
     public void undo() {
         if (!undoStack.isEmpty()) {
             redoStack.push(getState());
@@ -639,6 +646,9 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * pops off the redo stack when redo is pressed
+     */
     public void redo() {
         if (!redoStack.isEmpty()) {
             undoStack.push(getState());
@@ -648,13 +658,16 @@ public class GameModel implements Serializable {
         }
     }
 
+    /**
+     * Method to restore a gamestate from a given state
+     * @param state the state to be restored
+     */
     private void restoreState(GameState state) {
         this.currentPlayerIndex = state.currentPlayerIndex;
         this.isClockwise = state.clockwise;
         this.currentTurnTaken = state.turnTaken;
         this.currentSide = state.currentSide;
 
-        // Restore hands from PERFECT deep-copied snapshot
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             player.getHand().clear();
@@ -666,14 +679,13 @@ public class GameModel implements Serializable {
                         snapshotCard.getLightValue(),
                         snapshotCard.getDarkColor(),
                         snapshotCard.getDarkValue(),
-                        snapshotCard.getCurrentSide()  // Already correct!
+                        snapshotCard.getCurrentSide()
                 );
                 player.drawCard(restoredCard);
             }
             player.setScore(snapshotPlayer.getScore());
         }
 
-        // Restore discard pile
         discardPile.clear();
         if (state.topDiscard != null) {
             Card topCopy = new Card(
@@ -685,7 +697,6 @@ public class GameModel implements Serializable {
             );
             discardPile.add(topCopy);
         }
-        // Deck not restored (acceptable for undo/redo)
     }
 
     /**
@@ -699,10 +710,20 @@ public class GameModel implements Serializable {
         newRound();
     }
 
+    /**
+     * Simple functions to determine if a player can use the undo button
+     *
+     * @return true if undoStack is not empty
+     */
     public boolean canUndo() {
         return !undoStack.isEmpty();
     }
 
+    /**
+     * Simple functions to determine if a player can use the redo button
+     *
+     * @return true if redoStack is not empty
+     */
     public boolean canRedo() {
         return !redoStack.isEmpty();
     }
