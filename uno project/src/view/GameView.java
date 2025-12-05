@@ -122,6 +122,8 @@ public final class GameView {
             resourcePath = "view/DarkSideCards/";
         }
 
+        System.out.println("Card side: " + side + " color: " + color + " value: " + value);
+
         if (value == Card.Value.WILD || value == Card.Value.WILD_DRAW_TWO || value == Card.Value.WILD_DRAW_COLOR) {
             resourcePath += value + "/" + value + ".png";
         } else {

@@ -16,6 +16,7 @@ import java.util.*;
 public class GameState {
     public List<Player> players;
     public Player currentPlayer;
+    public int currentPlayerIndex;
     public Card topDiscard;
     public int deckSize;
     public List<Integer> playableIndices;

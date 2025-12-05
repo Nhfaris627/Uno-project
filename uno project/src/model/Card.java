@@ -87,6 +87,22 @@ public class Card implements Serializable {
         return value;
     }
 
+    public Color getLightColor() {
+        return lightColor;
+    }
+
+    public Value getLightValue() {
+        return lightValue;
+    }
+
+    public Color getDarkColor() {
+        return darkColor;
+    }
+
+    public Value getDarkValue() {
+        return darkValue;
+    }
+
     public int getPointValue() {
         switch(value) {
             case ZERO: return 0;

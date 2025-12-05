@@ -484,28 +484,43 @@ public class GameModel implements Serializable {
     public GameState getState() {
         GameState state = new GameState();
 
+        // DEEP COPY PLAYERS with DEEP COPY CARDS
         state.players = new ArrayList<>();
         for (Player original : players) {
-            Player copy = original instanceof AIPlayer
-                    ? new AIPlayer(original.getName(), ((AIPlayer) original).getDifficultyLevel())
-                    : new Player(original.getName());
+            Player copy;
+            if (original instanceof AIPlayer) {
+                AIPlayer aiOriginal = (AIPlayer) original;
+                copy = new AIPlayer(aiOriginal.getName(), aiOriginal.getDifficultyLevel());
+            } else {
+                copy = new Player(original.getName());
+            }
             copy.setScore(original.getScore());
 
-            for (Card card : original.getHand()) {
-                Card cardCopy = new Card(card.getColor(), card.getValue());
-                if (card.getCurrentSide() == Card.Side.DARK) {
-                    cardCopy.flip();
-                }
+            // DEEP COPY HAND CARDS - CAPTURE FLIP STATE
+            for (Card originalCard : original.getHand()) {
+                Card cardCopy = new Card(
+                        originalCard.getLightColor(),
+                        originalCard.getLightValue(),
+                        originalCard.getDarkColor(),
+                        originalCard.getDarkValue(),
+                        originalCard.getCurrentSide()  // CRITICAL: Preserve side
+                );
                 copy.drawCard(cardCopy);
             }
             state.players.add(copy);
         }
 
+        state.currentPlayerIndex = currentPlayerIndex;
         state.currentPlayer = state.players.get(currentPlayerIndex);
-        state.topDiscard = getTopDiscardCard() != null ? new Card(getTopDiscardCard().getColor(), getTopDiscardCard().getValue()) : null;
-        if (getTopDiscardCard() != null && getTopDiscardCard().getCurrentSide() == Card.Side.DARK) {
-            state.topDiscard.flip();
-        }
+
+        // DEEP COPY topDiscard
+        Card top = getTopDiscardCard();
+        state.topDiscard = (top != null) ? new Card(
+                top.getLightColor(), top.getLightValue(),
+                top.getDarkColor(), top.getDarkValue(),
+                top.getCurrentSide()
+        ) : null;
+
         state.deckSize = deck.size();
         state.playableIndices = getPlayableIndices();
         state.clockwise = isClockwise;
@@ -634,34 +649,43 @@ public class GameModel implements Serializable {
     }
 
     private void restoreState(GameState state) {
-        this.currentPlayerIndex = this.players.indexOf(state.currentPlayer);
+        this.currentPlayerIndex = state.currentPlayerIndex;
         this.isClockwise = state.clockwise;
         this.currentTurnTaken = state.turnTaken;
         this.currentSide = state.currentSide;
 
+        // Restore hands from PERFECT deep-copied snapshot
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             player.getHand().clear();
 
             Player snapshotPlayer = state.players.get(i);
             for (Card snapshotCard : snapshotPlayer.getHand()) {
-                Card restoredCard = new Card(snapshotCard.getColor(), snapshotCard.getValue());
-                if (snapshotCard.getCurrentSide() == Card.Side.DARK) {
-                    restoredCard.flip();
-                }
+                Card restoredCard = new Card(
+                        snapshotCard.getLightColor(),
+                        snapshotCard.getLightValue(),
+                        snapshotCard.getDarkColor(),
+                        snapshotCard.getDarkValue(),
+                        snapshotCard.getCurrentSide()  // Already correct!
+                );
                 player.drawCard(restoredCard);
             }
             player.setScore(snapshotPlayer.getScore());
         }
 
+        // Restore discard pile
         discardPile.clear();
         if (state.topDiscard != null) {
-            Card topCopy = new Card(state.topDiscard.getColor(), state.topDiscard.getValue());
-            if (state.topDiscard.getCurrentSide() == Card.Side.DARK) {
-                topCopy.flip();
-            }
+            Card topCopy = new Card(
+                    state.topDiscard.getLightColor(),
+                    state.topDiscard.getLightValue(),
+                    state.topDiscard.getDarkColor(),
+                    state.topDiscard.getDarkValue(),
+                    state.topDiscard.getCurrentSide()
+            );
             discardPile.add(topCopy);
         }
+        // Deck not restored (acceptable for undo/redo)
     }
 
     /**
