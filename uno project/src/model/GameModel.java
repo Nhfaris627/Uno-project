@@ -14,9 +14,7 @@ import controller.GameState;
  * @author Nicky Fang, 101304731
  * @version 4.0 - Added serialization support for Milestone 4
  */
-public class GameModel implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class GameModel {
 
     private List<Player> players;
     private List<Card> discardPile;
@@ -39,7 +37,7 @@ public class GameModel implements Serializable {
     public void saveGame(String filename) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(
                 new FileOutputStream(filename))) {
-            out.writeObject(this);
+            out.writeObject(this.getState());
             System.out.println("Game saved successfully to " + filename);
         } catch (IOException e) {
             System.err.println("Error saving game: " + e.getMessage());
@@ -54,13 +52,12 @@ public class GameModel implements Serializable {
      * @throws IOException If file reading fails
      * @throws ClassNotFoundException If deserialization fails
      */
-    public static GameModel loadGame(String filename) throws IOException, ClassNotFoundException {
+    public static GameState loadGame(String filename) throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(
                 new FileInputStream(filename))) {
-            GameModel model = (GameModel) in.readObject();
-            model.listeners = new ArrayList<>(); // Reinitialize transient field
+            GameState state = (GameState) in.readObject();
             System.out.println("Game loaded successfully from " + filename);
-            return model;
+            return state;
         } catch (FileNotFoundException e) {
             System.err.println("Save file not found: " + filename);
             throw e;
@@ -69,6 +66,9 @@ public class GameModel implements Serializable {
             throw e;
         } catch (ClassNotFoundException e) {
             System.err.println("Invalid save file format");
+            throw e;
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Number of players does not match");
             throw e;
         }
     }
@@ -527,6 +527,8 @@ public class GameModel implements Serializable {
         state.clockwise = isClockwise;
         state.turnTaken = currentTurnTaken;
         state.currentSide = currentSide;
+        state.undoStack = undoStack;
+        state.redoStack = redoStack;
 
         return state;
     }
@@ -662,11 +664,13 @@ public class GameModel implements Serializable {
      * Method to restore a gamestate from a given state
      * @param state the state to be restored
      */
-    private void restoreState(GameState state) {
+    public void restoreState(GameState state) {
         this.currentPlayerIndex = state.currentPlayerIndex;
         this.isClockwise = state.clockwise;
         this.currentTurnTaken = state.turnTaken;
         this.currentSide = state.currentSide;
+        this.undoStack = state.undoStack;
+        this.redoStack = state.redoStack;
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);

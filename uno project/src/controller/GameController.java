@@ -63,7 +63,11 @@ public class GameController implements ActionListener, GameModelListener {
             }
         }
         catch (Exception ex) {
-            view.showMessage("Error: " + ex.getMessage());
+            if (ex instanceof IndexOutOfBoundsException) {
+                view.showMessage("Number of players does not match");
+            } else {
+                view.showMessage("Error: " + ex.getMessage());
+            }
         }
     }
 
@@ -140,7 +144,7 @@ public class GameController implements ActionListener, GameModelListener {
             model.removeListener(this);
 
             // Load the saved model
-            this.model = GameModel.loadGame(SAVE_FILE);
+            model.restoreState(model.loadGame(SAVE_FILE));
 
             // Add this controller to the new model
             model.addListener(this);
