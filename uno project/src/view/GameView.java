@@ -436,4 +436,19 @@ public final class GameView {
     public void setUndoEnabled(boolean enabled) {
 
     }
+
+    /**
+     * prompts the user to play again after a game win
+     * @param winner the player who won
+     * @return true if the user wants to play again, false to quit
+     */
+    public boolean promptPlayAgain(Player winner) {
+        int choice = JOptionPane.showConfirmDialog(
+                root,
+                "🎉 " + winner.getName() + " WINS THE GAME WITH " + winner.getScore() + " POINTS! 🎉\n\nDo you want to play another game?",
+                "Game Over",
+                JOptionPane.YES_NO_OPTION
+        );
+        return choice == JOptionPane.YES_OPTION;
+    }
 }
