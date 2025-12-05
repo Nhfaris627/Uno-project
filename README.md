@@ -496,7 +496,7 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
   - JavaDoc completeness review
   - Git commit/branch strategy
 
-### Milestone 3 (AI Players + UNO Flip) - **(NEW)**
+### Milestone 3 (AI Players + UNO Flip) 
 
 #### **Faris Hassan** (101300683) - AI Integration & Game Model Enhancement
 - Extended GameModel with AI turn processing
@@ -558,6 +558,61 @@ java -jar junit-platform-console-standalone.jar --class-path .:../src --scan-cla
     - Updated `README.md` (this file)
     - AIPlayer test cases
     - Documentation review and proofreading
+ 
+### Milestone 4 (Replay Functionality, Undo/Redo Functionality, Saving/Loading Game) - **(NEW)**
+
+#### **Faris Hassan** (101300683) - UML, JUnit Testing
+- Updated UML class diagram with new methods and relationships
+- Created sequence diagrams for undo and load operation
+- Coordinated test coverage for new functionality
+- **Deliverables**:
+    - `M4-UML-ClassDiagram.puml`
+    - `M4-SequenceDiagram-Undo.puml`
+    - `M4-SequenceDiagram-Load.puml`
+    - `M4-DataStructureChanges.md`
+    - Test coordination and review
+
+#### **Nicky Fang** (101304731) - Replay Functionality, Documentation
+- Implemented `newRound()` method for automatic round replay
+- Created `restartGame()` method for manual game replay
+- Integrated replay prompt in `onGameWon()` event handler
+- Added `promptPlayAgain()` dialog in GameView
+- Updated `handleRoundWin()` to support seamless transitions
+- Created user documentation for new features
+- Documented data structure changes (M3 → M4)
+- **Deliverables**:
+    - Replay methods in `GameModel.java`
+    - Replay integration in `GameController.java`
+    - Replay dialog in `GameView.java`
+    - Updated `README.md` (this file)
+    - JavaDoc completeness review
+    - Updated game win flow
+
+#### **Ivan Arkhipov** (101310636) - Undo/Redo Functionality
+- Implemented stack-based state management in GameModel
+- Created `undo()`, `redo()`, `saveStateOnMove()`, `canUndo()`, `canRedo()` methods
+- Developed deep copy logic in `getState()` for proper state isolation
+- Implemented `restoreState()` method for state reconstruction
+- Added undo/redo button integration in GameController
+- **Deliverables**:
+    - Undo/redo methods in `GameModel.java`
+    - Controller handlers in `GameController.java`
+    - Button UI in `GameView.java`
+    - Sequence diagram for undo operation
+
+
+#### **Bhagya Patel** (101324150) - Serialization Functionality for Saving/Loading Games
+- Implemented `Serializable` interface in all model classes
+- Created `saveGame()` and `loadGame()` methods with file I/O
+- Added `serialVersionUID` to all serializable classes
+- Implemented custom serialization for AIPlayer's Random field
+- Added error handling for file operations
+- **Deliverables**:
+    - Save/load methods in `GameModel.java`
+    - Serializable implementations in all model classes
+    - Custom `readObject()` in `AIPlayer.java`
+    - Save/load buttons in `GameView.java`
+    - Sequence diagram for load operation
 
 ---
 
