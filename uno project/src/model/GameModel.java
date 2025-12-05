@@ -434,6 +434,7 @@ public class GameModel implements Serializable {
         Player gameWinner = checkForGameWinner(TARGET_SCORE);
         if (gameWinner != null) {
             fireGameWon(gameWinner);
+            return;
         }
 
         newRound();
@@ -661,6 +662,17 @@ public class GameModel implements Serializable {
             }
             discardPile.add(topCopy);
         }
+    }
+
+    /**
+     * Resets player scores and starts a new game
+     * Used for replay functionality
+     */
+    public void restartGame() {
+        for (Player p : players) {
+            p.setScore(0);
+        }
+        newRound();
     }
 
     public boolean canUndo() {

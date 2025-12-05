@@ -221,6 +221,15 @@ public class GameController implements ActionListener, GameModelListener {
     @Override
     public void onGameWon(Player winner, GameState state) {
         view.render(state);
+
+        // ask to prompt user to play again after game won
+        boolean playAgain = view.promptPlayAgain(winner);
+        if (playAgain) {
+            model.restartGame();
+        }
+        else {
+            System.exit(0);
+        }
         view.showMessage(" 🎊 " + winner + "  WINS THE GAME WITH " + winner.getScore() + " POINTS! 🎊 ");
     }
 
