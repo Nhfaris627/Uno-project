@@ -72,6 +72,10 @@ public class GameModel {
         this.listeners = new ArrayList<>();
     }
 
+    public GameModel(int i, boolean[] isAI) {
+
+    }
+
     /**
      * Starts a new game by dealing cards and setting up the initial discard pile.
      * Fires onGameInitialized event to all listeners
