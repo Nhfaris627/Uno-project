@@ -1,18 +1,23 @@
 package model;
 
 import controller.GameState;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Random;
 
 /**
- * Represents AI controlled player in UNO game.
+ * Represents AI controlled player in UNO game with serialization support
  * Implements a strategy based approach to card selection based on difficulty selected
  *
  * @author Nicky Fang 101304731
+ * @version 2.0 - Added Serializable for Milestone 4
  */
 public class AIPlayer extends Player {
 
-    private Random random;
+    private static final long serialVersionUID = 1L;
+
+    private transient Random random; // Transient because Random is not reliably serializable
     private DifficultyLevel difficulty;
 
     public enum DifficultyLevel {
@@ -25,28 +30,26 @@ public class AIPlayer extends Player {
         this.difficulty = difficulty;
     }
 
-    /**
-     * Default constructor creates a medium difficulty AI
-     * @param name The player's name
-     */
     public AIPlayer(String name) {
         this(name, DifficultyLevel.MEDIUM);
     }
 
     /**
-     * Selects card to play based on AI difficulty
-     * @param state Current game state
-     * @return Index of card to play, -1 if draw
+     * Reinitialize transient Random field after deserialization
      */
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.random = new Random(); // Reinitialize after deserialization
+    }
+
     public int selectCardToPlay(GameState state) {
         List<Integer> playableIndices = state.playableIndices;
 
-        // If no playable cards, signal to draw
         if (playableIndices.isEmpty()) {
             return -1;
         }
 
-        // Strategy based on difficulty
         switch (difficulty) {
             case EASY:
                 return selectRandomCard(playableIndices);
@@ -59,37 +62,22 @@ public class AIPlayer extends Player {
         }
     }
 
-    /**
-     * Selects a random playable card
-     * (EASY difficulty)
-     */
     private int selectRandomCard(List<Integer> playable) {
+        if (random == null) random = new Random(); // Safety check
         return playable.get(random.nextInt(playable.size()));
     }
-
-    /**
-     * Selects card using basic strategy
-     * (MEDIUM difficulty)
-     * Priority:
-     * 1. Special cards (skip, reverse, draw)
-     * 2. Cards that match color
-     * 3. High-value cards (to reduce hand value)
-     * 4. Any card
-     */
 
     private int selectWithBasicStrategy(List<Integer> playableIndices, GameState state) {
         List<Card> hand = this.getHand();
         Card topCard = state.topDiscard;
 
-        // Priority 1: Play special cards
         for (int idx : playableIndices) {
             Card card = hand.get(idx);
             if (isSpecialCard(card)) {
                 return idx;
-                }
+            }
         }
 
-        // Priority 2: Match color if possible
         for (int idx : playableIndices) {
             Card card = hand.get(idx);
             if (card.getColor() == topCard.getColor() &&
@@ -98,7 +86,6 @@ public class AIPlayer extends Player {
             }
         }
 
-        // Priority 3: Play highest value card
         int highestValueIdx = playableIndices.get(0);
         int highestValue = hand.get(highestValueIdx).getPointValue();
 
@@ -113,28 +100,15 @@ public class AIPlayer extends Player {
         return highestValueIdx;
     }
 
-    /**
-     * Selects card using advanced strategy
-     * (HARD difficulty)
-     * 1. Save wild cards for when needed
-     * 2. Consider next player's hand size
-     * 3. Maintain color control
-     * 4. strategic use of action cards
-     */
     private int selectWithAdvancedStrategy(List<Integer> playableIndices, GameState state) {
         List<Card> hand = this.getHand();
         Card topCard = state.topDiscard;
 
-        // Get next player info
         Player nextPlayer = getNextPlayer(state);
         boolean nextPlayerLowCards = (nextPlayer != null && nextPlayer.getHandSize() <= 2);
 
-        // If next player is close to winning, disrupts them
         if (nextPlayerLowCards) {
-
-            // make next player draw cards or skip
             for (int idx : playableIndices) {
-
                 Card card = hand.get(idx);
                 Card.Value value = card.getValue();
                 if (value == Card.Value.DRAW_ONE ||
@@ -148,7 +122,6 @@ public class AIPlayer extends Player {
             }
         }
 
-        // save wild cards unless necessary
         boolean hasNonWildPlayable = false;
         for (int idx : playableIndices) {
             if (hand.get(idx).getColor() != Card.Color.WILD) {
@@ -157,7 +130,6 @@ public class AIPlayer extends Player {
             }
         }
 
-        // if ai has non wild options, use basic strategy but exclude wilds
         if (hasNonWildPlayable) {
             List<Integer> nonWildIndices = new java.util.ArrayList<>();
             for (int idx : playableIndices) {
@@ -168,13 +140,9 @@ public class AIPlayer extends Player {
             return selectWithBasicStrategy(nonWildIndices, state);
         }
 
-        // otherwise use basic strategy with all cards
         return selectWithBasicStrategy(playableIndices, state);
     }
 
-    /**
-     * helper method to check if card is special
-     */
     private boolean isSpecialCard(Card card) {
         Card.Value value = card.getValue();
         return value == Card.Value.SKIP ||
@@ -188,15 +156,10 @@ public class AIPlayer extends Player {
                 value == Card.Value.WILD_DRAW_COLOR;
     }
 
-    /**
-     * helper method that gets the next player in turn order
-     * this is used in advanced ai model
-     */
     private Player getNextPlayer(GameState state) {
         int currentIdx = state.players.indexOf(state.currentPlayer);
         int nextIdx;
 
-        //check if clockwise or anticlockwise
         if (state.clockwise) {
             nextIdx = (currentIdx + 1) % state.players.size();
         } else {
@@ -206,13 +169,10 @@ public class AIPlayer extends Player {
         return state.players.get(nextIdx);
     }
 
-    /**
-     * gets most common colour in hand for wild card selection
-     * @return most common colour, or random color if hand empty
-     */
     public Card.Color chooseWildColor() {
-        List<Card> hand = this.getHand();
+        if (random == null) random = new Random(); // Safety check
 
+        List<Card> hand = this.getHand();
         int[] colorCounts = new int[4];
 
         for (Card card : hand) {
@@ -229,11 +189,9 @@ public class AIPlayer extends Player {
                 case YELLOW:
                     colorCounts[3]++;
                     break;
-                // Ignores WILD and dark side colors for now
             }
         }
 
-        // Find maxs
         int maxCount = 0;
         int maxIndex = 0;
         for (int i = 0; i < 4; i++) {
@@ -243,26 +201,20 @@ public class AIPlayer extends Player {
             }
         }
 
-        // if no colored cards, choose random
         if (maxCount == 0) {
             maxIndex = random.nextInt(4);
         }
 
-        // Return  color
         Card.Color[] colors = {Card.Color.RED, Card.Color.BLUE,
                 Card.Color.GREEN, Card.Color.YELLOW};
         return colors[maxIndex];
     }
 
-    /**
-     * choose color for wild draw color card
-     * @return dark side color (TEAL, PURPLE, PINK, ORANGE)
-     */
     public Card.Color chooseWildDrawColor() {
-        List<Card> hand = this.getHand();
+        if (random == null) random = new Random(); // Safety check
 
-        // dark side colors
-        int[] colorCounts = new int[4]; // TEAL, PURPLE, PINK, ORANGE
+        List<Card> hand = this.getHand();
+        int[] colorCounts = new int[4];
 
         for (Card card : hand) {
             switch (card.getColor()) {
@@ -281,7 +233,6 @@ public class AIPlayer extends Player {
             }
         }
 
-        // Find max
         int maxCount = 0;
         int maxIndex = 0;
         for (int i = 0; i < 4; i++) {
@@ -291,21 +242,16 @@ public class AIPlayer extends Player {
             }
         }
 
-        // If no dark color cards, random
         if (maxCount == 0) {
             maxIndex = random.nextInt(4);
         }
 
-        // rreturn color
         Card.Color[] colors = {Card.Color.TEAL, Card.Color.PURPLE,
                 Card.Color.PINK, Card.Color.ORANGE};
         return colors[maxIndex];
     }
 
-    /**
-     * Checks if this player is an AI
-     * @return true (always, since this is an AI player), overrides Player
-     */
+    @Override
     public boolean isAI() {
         return true;
     }
@@ -313,5 +259,4 @@ public class AIPlayer extends Player {
     public DifficultyLevel getDifficultyLevel() {
         return difficulty;
     }
-
 }

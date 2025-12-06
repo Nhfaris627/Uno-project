@@ -17,8 +17,8 @@ public class Main {
 
             // get number of players
             int count = view.promptPlayerCount(frame);
-                frame.dispose();
-                if (count < 2 || count > 4) {
+            frame.dispose();
+            if (count < 2 || count > 4) {
                 return;
             }
 

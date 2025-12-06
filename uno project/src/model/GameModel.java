@@ -1,21 +1,19 @@
 package model;
 
+import java.io.*;
 import java.util.*;
 import controller.GameModelListener;
 import controller.GameState;
 
 /**
- * Core model for the UNO game
+ * Core model for the UNO game with serialization support
  * manages game state, rules, and notifies listeners of changes.
- * this class has no UI or I/O dependencies, all interactions happen through
- * the controller.GameModelListener observer pattern
- * 
+ *
  * @author Bhagya Patel, 101324150
  * @author Faris Hassan, 101300683
  * @author Nicky Fang, 101304731
- * @version 3.0
+ * @version 4.0 - Added serialization support for Milestone 4
  */
-
 public class GameModel {
 
     private List<Player> players;
@@ -23,27 +21,62 @@ public class GameModel {
     private Deck deck;
     private int currentPlayerIndex;
     private boolean isClockwise;
-    private List<GameModelListener> listeners;
+    private transient List<GameModelListener> listeners; // Don't serialize listeners
     private static final int TARGET_SCORE = 500;
     private static final int INITIAL_HAND_SIZE = 7;
     private boolean currentTurnTaken = false;
-    private Card.Side currentSide = Card.Side.LIGHT;  // Track which side is active
+    private Card.Side currentSide = Card.Side.LIGHT;
+    private Stack<GameState> undoStack = new Stack<>();
+    private Stack<GameState> redoStack = new Stack<>();
 
     /**
-     * Creates a new GameModel with specified player count (all human players)
-     * @param playerCount Number of players (2-4)
+     * Saves the current game state to a file
+     * @param filename The file path to save to
+     * @throws IOException If file writing fails
      */
-    public GameModel(int playerCount) {
-        this(playerCount, new boolean[playerCount] , AIPlayer.DifficultyLevel.MEDIUM); // All false = all human
+    public void saveGame(String filename) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream(filename))) {
+            out.writeObject(this.getState());
+            System.out.println("Game saved successfully to " + filename);
+        } catch (IOException e) {
+            System.err.println("Error saving game: " + e.getMessage());
+            throw e;
+        }
     }
 
     /**
-     * Creates a new model.GameModel with specified player names.
-     * initializes the deck, discard pile. and sets up the game state.
-     *
-     * @param playerCount List of player names (must be 2-4 players)
-     * @throws IllegalArgumentException if player count is not between 2 and 4
+     * Loads a game state from a file
+     * @param filename The file path to load from
+     * @return The loaded GameModel
+     * @throws IOException If file reading fails
+     * @throws ClassNotFoundException If deserialization fails
      */
+    public static GameState loadGame(String filename) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream(filename))) {
+            GameState state = (GameState) in.readObject();
+            System.out.println("Game loaded successfully from " + filename);
+            return state;
+        } catch (FileNotFoundException e) {
+            System.err.println("Save file not found: " + filename);
+            throw e;
+        } catch (IOException e) {
+            System.err.println("Error loading game: " + e.getMessage());
+            throw e;
+        } catch (ClassNotFoundException e) {
+            System.err.println("Invalid save file format");
+            throw e;
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Number of players does not match");
+            throw e;
+        }
+    }
+
+    public GameModel(int playerCount) {
+        this(playerCount, new boolean[playerCount], AIPlayer.DifficultyLevel.MEDIUM);
+    }
+
     public GameModel(int playerCount, boolean[] isAI, AIPlayer.DifficultyLevel difficultyLevel) {
         if (playerCount == 0 || playerCount < 2 || playerCount > 4) {
             throw new IllegalArgumentException("Game requires 2-4 players");
@@ -57,7 +90,6 @@ public class GameModel {
         for (int i = 0; i < playerCount; i++) {
             Player player;
             if (isAI != null && isAI[i]) {
-                // create AI player with medium difficulty
                 player = new AIPlayer("AI Player " + (i + 1), difficultyLevel);
             } else {
                 player = new Player("Player " + (i + 1));
@@ -70,18 +102,11 @@ public class GameModel {
         this.currentPlayerIndex = 0;
         this.isClockwise = true;
         this.listeners = new ArrayList<>();
+        this.undoStack = new Stack<GameState>();
+        this.redoStack = new Stack<GameState>();
     }
 
-    public GameModel(int i, boolean[] isAI) {
-
-    }
-
-    /**
-     * Starts a new game by dealing cards and setting up the initial discard pile.
-     * Fires onGameInitialized event to all listeners
-     */
     public void startGame() {
-        // Deal initial cards to each player
         for (Player player : players) {
             for (int i = 0; i < INITIAL_HAND_SIZE; i++) {
                 Card card = deck.drawCard();
@@ -91,10 +116,9 @@ public class GameModel {
             }
         }
 
-        // Place first card on discard pile (avoid starting with special cards)
         Card firstCard = deck.drawCard();
         while (firstCard != null && isSpecialCard(firstCard)) {
-            deck.drawCard(); // Put it back somehow, for simplicity just draw another
+            deck.drawCard();
             firstCard = deck.drawCard();
         }
 
@@ -105,15 +129,8 @@ public class GameModel {
         fireModelInit();
     }
 
-    /**
-     * Plays a card from the current player's hand.
-     * Handles wild card color selection and special card effects.
-     *
-     * @param player      The player playing the card (unused in this simplified version)
-     * @param handIndex   Index of the card in the current player's hand
-     * @param chosenColor Color chosen for wild cards (null for non-wild cards)
-     */
     public void playCard(Player player, int handIndex, Card.Color chosenColor) {
+        saveStateOnMove();
         Player currentPlayer = players.get(currentPlayerIndex);
 
         if (handIndex < 0 || handIndex >= currentPlayer.getHandSize()) {
@@ -123,46 +140,36 @@ public class GameModel {
 
         Card playedCard = currentPlayer.getHand().get(handIndex);
 
-        // Validate the card can be played
         if (!isCardPlayable(playedCard)) {
             fireError("Cannot play " + playedCard + " on " + getTopDiscardCard());
             return;
         }
 
-        // Remove card from hand and add to discard pile
         currentPlayer.getHand().remove(handIndex);
         discardPile.add(playedCard);
 
-        // Handle wild card color choice
         if (playedCard.getColor() == Card.Color.WILD && chosenColor != null) {
             playedCard.setColor(chosenColor);
         }
 
-        // Handle Wild Draw Color
         if (playedCard.getValue() == Card.Value.WILD_DRAW_COLOR && chosenColor != null) {
             playedCard.setColor(chosenColor);
         }
 
         fireStateUpdated();
 
-        // Check for round winner
         if (currentPlayer.getHandSize() == 0) {
             handleRoundWin(currentPlayerIndex);
             return;
         }
 
-        // Handle special card effects
         handleSpecialCard(playedCard);
         currentTurnTaken = true;
         fireStateUpdated();
     }
 
-    /**
-     * Current player draws a card from the deck
-     *
-     * @return The drawn card, or null if deck is empty
-     */
     public Card drawCard() {
+        saveStateOnMove();
         Player currentPlayer = players.get(currentPlayerIndex);
 
         Card drawnCard = deck.drawCard();
@@ -173,32 +180,22 @@ public class GameModel {
             fireStateUpdated();
             return drawnCard;
         } else {
-            fireError("model.Deck is empty!");
+            fireError("Deck is empty!");
             return null;
         }
     }
 
-    /**
-     * Ends the current player's turn and advances to the next player.
-     */
     public void endTurn() {
+        saveStateOnMove();
         advanceToNextPlayer();
         currentTurnTaken = false;
         fireTurnAdvanced(players.get(currentPlayerIndex));
     }
 
-    /**
-     * Calculates and awards points when a player wins a round.
-     * The winner gets points equal to the sum of all cards in opponents' hands.
-     *
-     * @param winnerIndex The index of the winning player
-     * @return The total points awarded
-     */
     public int calculateRoundScore(int winnerIndex) {
         Player winner = players.get(winnerIndex);
         int totalPoints = 0;
 
-        // Calculate points from all opponents' hands
         for (int i = 0; i < players.size(); i++) {
             if (i != winnerIndex) {
                 Player opponent = players.get(i);
@@ -211,12 +208,6 @@ public class GameModel {
         return totalPoints;
     }
 
-    /**
-     * Checks if any player has reached the target score to win the game.
-     *
-     * @param targetScore The score needed to win the game (typically 500)
-     * @return The winning player, or null if no winner yet
-     */
     public Player checkForGameWinner(int targetScore) {
         for (Player player : players) {
             if (player.getScore() >= targetScore) {
@@ -226,34 +217,16 @@ public class GameModel {
         return null;
     }
 
-    /**
-     * Adds a listener to receive game events.
-     *
-     * @param l The listener to add
-     */
     public void addListener(GameModelListener l) {
         if (l != null && !listeners.contains(l)) {
             listeners.add(l);
         }
     }
 
-    /**
-     * Removes a listener from receiving game events.
-     *
-     * @param l The listener to remove
-     */
     public void removeListener(GameModelListener l) {
-
         listeners.remove(l);
     }
 
-    //HELPER METHODS
-
-    /**
-     * Gets the top card of the discard pile.
-     *
-     * @return The top card, or null if discard pile is empty
-     */
     private Card getTopDiscardCard() {
         if (discardPile.isEmpty()) {
             return null;
@@ -261,18 +234,12 @@ public class GameModel {
         return discardPile.get(discardPile.size() - 1);
     }
 
-    /**
-     * Gets indices of playable cards in current player's hand.
-     *
-     * @return List of indices representing playable cards
-     */
     private List<Integer> getPlayableIndices() {
         Player currentPlayer = players.get(currentPlayerIndex);
         List<Integer> playableIndices = new ArrayList<>();
         Card topCard = getTopDiscardCard();
 
         if (topCard == null) {
-            // All cards playable if no top card
             for (int i = 0; i < currentPlayer.getHandSize(); i++) {
                 playableIndices.add(i);
             }
@@ -289,12 +256,6 @@ public class GameModel {
         return playableIndices;
     }
 
-    /**
-     * Checks if a card can be played on the current discard pile.
-     *
-     * @param card The card to check
-     * @return true if the card is playable, false otherwise
-     */
     private boolean isCardPlayable(Card card) {
         Card topCard = getTopDiscardCard();
 
@@ -302,17 +263,14 @@ public class GameModel {
             return true;
         }
 
-        // Wild cards can always be played
         if (card.getColor() == Card.Color.WILD) {
             return true;
         }
 
-        // Same color
         if (card.getColor() == topCard.getColor()) {
             return true;
         }
 
-        // Same value
         if (card.getValue() == topCard.getValue()) {
             return true;
         }
@@ -320,12 +278,6 @@ public class GameModel {
         return false;
     }
 
-    /**
-     * Checks if a card is a special action card.
-     *
-     * @param card The card to check
-     * @return true if the card is special, false otherwise
-     */
     private boolean isSpecialCard(Card card) {
         Card.Value value = card.getValue();
         return value == Card.Value.SKIP ||
@@ -339,21 +291,15 @@ public class GameModel {
                 value == Card.Value.WILD_DRAW_COLOR;
     }
 
-    /**
-     * Handles the effects of special cards.
-     *
-     * @param playedCard The special card that was played
-     */
     private void handleSpecialCard(Card playedCard) {
         switch (playedCard.getValue()) {
             case SKIP:
-                advanceToNextPlayer(); // Skip next player
+                advanceToNextPlayer();
                 break;
 
             case REVERSE:
                 isClockwise = !isClockwise;
                 if (players.size() == 2) {
-                    // In 2-player game, reverse acts like skip
                     advanceToNextPlayer();
                 }
                 break;
@@ -379,7 +325,6 @@ public class GameModel {
                 break;
 
             case WILD:
-                // Color already set in playCard method
                 break;
 
             case FLIP:
@@ -399,43 +344,30 @@ public class GameModel {
                 break;
 
             default:
-                // Regular number card, no special effect
                 break;
         }
     }
 
-    /**
-     * Handles the FLIP card effect
-     * Flips all cards in the game to their opposite side.
-     */
     private void handleFlipCard() {
         currentSide = (currentSide == Card.Side.LIGHT) ? Card.Side.DARK : Card.Side.LIGHT;
 
-        // Loop through all cards in all players' hands
         for (Player player : players) {
             player.flipHand();
         }
 
-        // Flip all cards in discard pile
         for (Card card : discardPile) {
             card.flip();
         }
 
-        // Flip all cards in deck
         deck.flipAllCards();
 
         fireStateUpdated();
     }
 
-    /**
-     * Handles the DRAW FIVE card effect.
-     * Next player draws 5 cards and skips their turn.
-     */
     private void handleDrawFive() {
         advanceToNextPlayer();
         Player target = players.get(currentPlayerIndex);
 
-        // Draw 5 cards
         for (int i = 0; i < 5; i++) {
             Card drawnCard = deck.drawCard();
             if (drawnCard != null) {
@@ -445,26 +377,12 @@ public class GameModel {
                 break;
             }
         }
-        // Skip the target player's turn
         advanceToNextPlayer();
     }
 
-    /**
-     * Handles the SKIP EVERYONE card effect.
-     * All other players are skipped, current player gets another turn.
-     */
     private void handleSkipEveryone() {
-        // Current player gets another turn, don't advance
-        // Skips all other players
-        // No action needed, turn stays with current player
     }
 
-    /**
-     * Handles the WILD DRAW COLOR card effect.
-     * Next player draws cards until they get one of the chosen color.
-     *
-     * @param playedCard The Wild Draw Color card with chosen color
-     */
     private void handleWildDrawColor(Card playedCard) {
         advanceToNextPlayer();
         Player target = players.get(currentPlayerIndex);
@@ -475,10 +393,9 @@ public class GameModel {
             return;
         }
 
-        // Draw cards until getting the target color
         Card drawnCard;
         int cardsDrawn = 0;
-        int maxCards = 20; // Safety limit to prevent infinite loop
+        int maxCards = 20;
 
         do {
             drawnCard = deck.drawCard();
@@ -497,15 +414,9 @@ public class GameModel {
 
         } while (drawnCard != null && drawnCard.getColor() != targetColor);
 
-        // Skip the target player's turn
         advanceToNextPlayer();
     }
 
-
-    
-    /**
-     * Advances the turn to the next player based on direction.
-     */
     private void advanceToNextPlayer() {
         if (isClockwise) {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -513,110 +424,112 @@ public class GameModel {
             currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
         }
     }
-    
-    /**
-     * Handles round win scoring and checks for game winner.
-     * 
-     * @param winnerIndex Index of the player who won the round
-     */
+
     private void handleRoundWin(int winnerIndex) {
         Player winner = players.get(winnerIndex);
         int points = calculateRoundScore(winnerIndex);
-        
+
         fireRoundWon(winner, points);
-        
-        // Check for game winner
+
         Player gameWinner = checkForGameWinner(TARGET_SCORE);
         if (gameWinner != null) {
             fireGameWon(gameWinner);
+            return;
         }
 
         newRound();
     }
 
-    //EVENT FIRING METHODS
-    
-    /**
-     * Notifies all listeners that the game model has been initialized.
-     */
     private void fireModelInit() {
         GameState state = getState();
         for (GameModelListener listener : listeners) {
             listener.onModelInit(state);
         }
     }
-    
-    /**
-     * Notifies all listeners that the game state has been updated.
-     */
+
     private void fireStateUpdated() {
         GameState state = getState();
         for (GameModelListener listener : listeners) {
             listener.onStateUpdated(state);
         }
     }
-    
-    /**
-     * Notifies all listeners that the turn has advanced to the next player.
-     * 
-     * @param current The player whose turn it now is
-     */
+
     private void fireTurnAdvanced(Player current) {
         GameState state = getState();
         for (GameModelListener listener : listeners) {
             listener.onTurnAdvanced(current, state);
         }
     }
-    
-    /**
-     * Notifies all listeners that a player has won a round.
-     * 
-     * @param winner The player who won the round
-     * @param points Points awarded to the winner
-     */
+
     private void fireRoundWon(Player winner, int points) {
         GameState state = getState();
         for (GameModelListener listener : listeners) {
             listener.onRoundWon(winner, points, state);
         }
     }
-    
-    /**
-     * Notifies all listeners that a player has won the game.
-     * 
-     * @param winner The player who won the game
-     */
+
     private void fireGameWon(Player winner) {
         GameState state = getState();
         for (GameModelListener listener : listeners) {
             listener.onGameWon(winner, state);
         }
     }
-    
-    /**
-     * Notifies all listeners of an error condition.
-     * 
-     * @param msg Error message
-     */
+
     private void fireError(String msg) {
         for (GameModelListener listener : listeners) {
             listener.onError(msg);
         }
     }
 
-
-
-    public GameState getState()
-    {
+    /**
+     * method to get the current gamestate using deep copies
+     * @return the gamestate
+     */
+    public GameState getState() {
         GameState state = new GameState();
-        state.players = new ArrayList<>(players);
-        state.currentPlayer = players.get(currentPlayerIndex);
-        state.topDiscard = getTopDiscardCard();
+
+        state.players = new ArrayList<>();
+        for (Player original : players) {
+            Player copy;
+            if (original instanceof AIPlayer) {
+                AIPlayer aiOriginal = (AIPlayer) original;
+                copy = new AIPlayer(aiOriginal.getName(), aiOriginal.getDifficultyLevel());
+            } else {
+                copy = new Player(original.getName());
+            }
+            copy.setScore(original.getScore());
+
+            for (Card originalCard : original.getHand()) {
+                Card cardCopy = new Card(
+                        originalCard.getLightColor(),
+                        originalCard.getLightValue(),
+                        originalCard.getDarkColor(),
+                        originalCard.getDarkValue(),
+                        originalCard.getCurrentSide()
+                );
+                copy.drawCard(cardCopy);
+            }
+            state.players.add(copy);
+        }
+
+        state.currentPlayerIndex = currentPlayerIndex;
+        state.currentPlayer = state.players.get(currentPlayerIndex);
+
+        Card top = getTopDiscardCard();
+        state.topDiscard = (top != null) ? new Card(
+                top.getLightColor(), top.getLightValue(),
+                top.getDarkColor(), top.getDarkValue(),
+                top.getCurrentSide()
+        ) : null;
+
         state.deckSize = deck.size();
         state.playableIndices = getPlayableIndices();
         state.clockwise = isClockwise;
         state.turnTaken = currentTurnTaken;
-        state.currentSide = currentSide;  // Include current side
+        state.currentSide = currentSide;
+        state.undoStack = undoStack;
+        state.redoStack = redoStack;
+
         return state;
     }
 
@@ -625,17 +538,14 @@ public class GameModel {
     }
 
     public void newRound() {
-        // Clear all hands
         for (Player p : players) {
             p.getHand().clear();
         }
 
-        // Reset deck and discard pile
         deck = new Deck();
         discardPile.clear();
-        discardPile.add(deck.drawCard());  // new top card
+        discardPile.add(deck.drawCard());
 
-        // Deal 7 cards to each player
         for (Player p : players) {
             for (int i = 0; i < 7; i++) {
                 Card c = deck.drawCard();
@@ -643,8 +553,7 @@ public class GameModel {
             }
         }
 
-        // Reset turn state
-        currentPlayerIndex = 0;  // or rotate starting player
+        currentPlayerIndex = 0;
         isClockwise = true;
         currentTurnTaken = false;
         currentSide = Card.Side.LIGHT;
@@ -652,21 +561,15 @@ public class GameModel {
         fireStateUpdated();
     }
 
-    /**
-     * Processes an AI player turn
-     * called after advancing to AI player
-     */
     public void processAITurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
 
-        //check if player is of AIPlayer object (inheritance)
         if (!(currentPlayer instanceof AIPlayer)) {
             return;
         }
 
         AIPlayer aiPlayer = (AIPlayer) currentPlayer;
 
-        // delay, remove this for testing
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -675,38 +578,27 @@ public class GameModel {
 
         GameState state = getState();
 
-        // selects card to play
         int cardIndex = aiPlayer.selectCardToPlay(state);
 
-        // if no playable card (returns -1), AI draws
         if (cardIndex == -1) {
             Card drawnCard = drawCard();
 
-            // if drawn card playable
             if (drawnCard != null && isCardPlayable(drawnCard)) {
-                // AI plays the drawn card at end of hand
                 int drawnCardIndex = aiPlayer.getHandSize() - 1;
-
-                // AI decides whether to play drawn card
                 handleAICardPlay(aiPlayer, drawnCardIndex);
             } else {
-                // can't play drawn card, end turn
                 endTurn();
             }
         } else {
-            // plays selected card
             handleAICardPlay(aiPlayer, cardIndex);
         }
     }
 
-    /**
-     * Handles AI playing a card, including wild color selection
-     */
     private void handleAICardPlay(AIPlayer aiPlayer, int cardIndex) {
+        saveStateOnMove();
         Card playedCard = aiPlayer.getHand().get(cardIndex);
         Card.Color chosenColor = null;
 
-        // AI chooses color for wild cards
         if (playedCard.getColor() == Card.Color.WILD) {
             if (playedCard.getValue() == Card.Value.WILD ||
                     playedCard.getValue() == Card.Value.WILD_DRAW_TWO) {
@@ -716,16 +608,12 @@ public class GameModel {
             }
         }
 
-        // Play card
         playCard(aiPlayer, cardIndex, chosenColor);
 
-        // Check if game should continue (not ended by round/game win)
         if (aiPlayer.getHandSize() > 0) {
-            // For Skip Everyone card, AI gets another turn
             if (playedCard.getValue() == Card.Value.SKIP_EVERYONE) {
                 currentTurnTaken = false;
                 fireStateUpdated();
-                // Process another AI turn immediately
                 processAITurn();
             } else {
                 endTurn();
@@ -733,13 +621,114 @@ public class GameModel {
         }
     }
 
-    /**
-     * check if current player is AI and processes turn
-     */
     public void checkAndProcessAITurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
         if (currentPlayer instanceof AIPlayer) {
             processAITurn();
         }
+    }
+
+    /**
+     * save the game state whenever a move is made
+     */
+    private void saveStateOnMove() {
+        undoStack.push(getState());
+        redoStack.clear();
+    }
+
+    /**
+     * pops off the undo stack when undo is pressed
+     */
+    public void undo() {
+        if (!undoStack.isEmpty()) {
+            redoStack.push(getState());
+            GameState prev = undoStack.pop();
+            restoreState(prev);
+            fireStateUpdated();
+        }
+    }
+
+    /**
+     * pops off the redo stack when redo is pressed
+     */
+    public void redo() {
+        if (!redoStack.isEmpty()) {
+            undoStack.push(getState());
+            GameState next = redoStack.pop();
+            restoreState(next);
+            fireStateUpdated();
+        }
+    }
+
+    /**
+     * Method to restore a gamestate from a given state
+     * @param state the state to be restored
+     */
+    public void restoreState(GameState state) {
+        this.currentPlayerIndex = state.currentPlayerIndex;
+        this.isClockwise = state.clockwise;
+        this.currentTurnTaken = state.turnTaken;
+        this.currentSide = state.currentSide;
+        this.undoStack = state.undoStack;
+        this.redoStack = state.redoStack;
+
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            player.getHand().clear();
+
+            Player snapshotPlayer = state.players.get(i);
+            for (Card snapshotCard : snapshotPlayer.getHand()) {
+                Card restoredCard = new Card(
+                        snapshotCard.getLightColor(),
+                        snapshotCard.getLightValue(),
+                        snapshotCard.getDarkColor(),
+                        snapshotCard.getDarkValue(),
+                        snapshotCard.getCurrentSide()
+                );
+                player.drawCard(restoredCard);
+            }
+            player.setScore(snapshotPlayer.getScore());
+        }
+
+        discardPile.clear();
+        if (state.topDiscard != null) {
+            Card topCopy = new Card(
+                    state.topDiscard.getLightColor(),
+                    state.topDiscard.getLightValue(),
+                    state.topDiscard.getDarkColor(),
+                    state.topDiscard.getDarkValue(),
+                    state.topDiscard.getCurrentSide()
+            );
+            discardPile.add(topCopy);
+        }
+    }
+
+    /**
+     * Resets player scores and starts a new game
+     * Used for replay functionality
+     */
+    public void restartGame() {
+        for (Player p : players) {
+            p.setScore(0);
+        }
+        newRound();
+    }
+
+    /**
+     * Simple functions to determine if a player can use the undo button
+     *
+     * @return true if undoStack is not empty
+     */
+    public boolean canUndo() {
+        return !undoStack.isEmpty();
+    }
+
+    /**
+     * Simple functions to determine if a player can use the redo button
+     *
+     * @return true if redoStack is not empty
+     */
+    public boolean canRedo() {
+        return !redoStack.isEmpty();
     }
 }

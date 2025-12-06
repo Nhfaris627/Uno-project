@@ -3,6 +3,7 @@ package controller;
 import model.Card;
 import model.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,13 +14,18 @@ import java.util.*;
  * @author Faris Hassan 101300683
  * @version 3.0 - Added Uno Flip support
  */
-public class GameState {
+public class GameState implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public List<Player> players;
     public Player currentPlayer;
+    public int currentPlayerIndex;
     public Card topDiscard;
     public int deckSize;
     public List<Integer> playableIndices;
     public boolean clockwise;
     public boolean turnTaken;
     public Card.Side currentSide;
+    public Stack<GameState> undoStack;
+    public Stack<GameState> redoStack;
 }
