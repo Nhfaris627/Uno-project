@@ -1,330 +1,238 @@
-# UNO FLIP Game - Milestone 4
+# Milestone 5: Custom Card Images Implementation
 
-## Project Overview
+## Feature Selected: Custom Images for Cards (UNO)
 
-This is a Java-based implementation of the UNO FLIP card game, developed using the Model-View-Controller (MVC) architectural pattern. The game supports 2-4 players (human or AI) and includes advanced features such as save/load functionality, undo/redo capabilities, replay functionality, and AI opponents with varying difficulty levels.
-
-**Version**: 4.0  
-**Course**: SYSC3110 - Software Engineering  
-**Institution**: Carleton University
+Our team implemented **Feature 1 – Images** by adding custom card images for all UNO cards in our game. This enhancement significantly improved the visual experience and user interface, making the game more engaging and true to the physical UNO card game.
 
 ---
 
-## Team Members
+## Implementation Overview
 
-| Name | Student ID |
-|------|------------|
-| **Nicky Fang** | 101304731 |
-| **Bhagya Patel** | 101324150 |
-| **Faris Hassan** | 101300683 |
-| **Ivan Arkhipov** | 101310636 |
+The custom card image system was integrated into the `GameView` class, which handles all visual rendering of the game. The implementation involved:
+
+1. **Asset Organization**: Creating a comprehensive directory structure for all card images
+2. **Dynamic Image Loading**: Implementing a resource loading system using Java's ClassLoader
+3. **Image Rendering**: Scaling and displaying cards appropriately in the GUI
+4. **Visual Feedback**: Creating disabled/grayed-out states for unplayable cards
+5. **UNO Flip Support**: Managing both Light and Dark side card images
+
+All card images are loaded dynamically at runtime from the `view/unoCards/` and `view/DarkSideCards/` directories, organized by card value and color.
 
 ---
 
 ## Team Contributions
 
-### Milestone 4 Contributions
+### **Faris Hassan (101300683) - Asset Organization & Resource Structure**
 
-| Team Member | Milestone 4 Contributions |
-|-------------|--------------------------|
-| **Nicky Fang (101304731)** | • Replay functionality implementation<br>• Game restart after win<br>• Score reset mechanism<br>• Testing replay features |
-| **Bhagya Patel (101324150)** | • Undo functionality implementation<br>• Redo functionality implementation<br>• Stack-based state management<br>• State restoration logic |
-| **Faris Hassan (101300683)** | • JUnit tests for serialization<br>• JUnit tests for undo/redo<br>• UML class diagrams creation<br>• Project documentation<br>• Sequence diagrams |
-| **Ivan Arkhipov (101310636)** | • Serialization implementation<br>• Deserialization implementation<br>• Save/Load functionality<br>• Transient field handling<br>• File I/O operations |
+**Contribution**: Faris was responsible for organizing the complete card image asset structure and ensuring all images were properly named and accessible.
 
-### Previous Milestones Summary
+**Implementation Details**:
+- Created the hierarchical directory structure for card images:
+  ```
+  view/
+  ├── unoCards/          (Light side cards)
+  │   ├── ZERO/
+  │   ├── ONE/
+  │   ├── TWO/
+  │   ├── ...
+  │   ├── SKIP/
+  │   ├── REVERSE/
+  │   ├── DRAW_ONE/
+  │   ├── FLIP/
+  │   ├── WILD/
+  │   └── WILD_DRAW_TWO/
+  └── DarkSideCards/     (Dark side cards)
+      ├── FIVE/
+      ├── DRAW_FIVE/
+      ├── SKIP_EVERYONE/
+      ├── FLIP/
+      └── WILD_DRAW_COLOR/
+  ```
 
-#### Milestone 3 Contributions
-| Team Member | Contributions |
-|-------------|---------------|
-| **Nicky Fang** | AI player implementation, AI difficulty levels, AI strategy patterns |
-| **Bhagya Patel** | GameModel core logic, Observer pattern implementation, Game rules |
-| **Faris Hassan** | UNO FLIP mechanics, Dark side cards, FLIP card functionality |
-| **Ivan Arkhipov** | GameView GUI, Card rendering, UI components and layout |
-
-#### Milestone 2 Contributions
-| Team Member | Contributions |
-|-------------|---------------|
-| **Nicky Fang** | Controller implementation, ActionListener handling |
-| **Bhagya Patel** | Model Class, Implementing functionality for game |
-| **Faris Hassan** | Junit Testing, UMl diagrams, Documentation |
-| **Ivan Arkhipov** | Initial GUI framework, Implementation of View |
-
-#### Milestone 1 Contributions
-| Team Member | Contributions |
-|-------------|---------------|
-| **Nicky Fang** | Project setup, Initial architecture design |
-| **Bhagya Patel** | MVC pattern design, GameModel structure |
-| **Faris Hassan** | UNO rules research, Game flow design |
-| **Ivan Arkhipov** | UI mockups, Visual design planning |
+- Ensured proper naming conventions for all image files (e.g., `RED.png`, `BLUE.png`, `GREEN.png`, `YELLOW.png` for numbered cards, and `WILD.png` for wild cards)
+- Organized 112+ card images into appropriate subdirectories based on card values
+- Validated that all card types (numbers 0-9, special cards, wild cards, and UNO Flip cards) had corresponding images for all colors
+- Coordinated with the team to ensure file paths matched the code implementation
 
 ---
 
-## Milestone 4 Features
+### **Ivan Arkhipov (101310636) - Dynamic Image Loading System**
 
-### New Features Implemented
+**Contribution**: Ivan implemented the core image loading functionality that dynamically retrieves card images from the resource directory at runtime.
 
-1. **Serialization/Deserialization (Ivan Arkhipov)**
-   - Save current game state to file (`uno_save.dat`)
-   - Load previously saved games
-   - Preserves all game data including undo/redo history
-   - Proper handling of transient fields
-   - Deep copy mechanisms for state preservation
+**Implementation Details**:
 
-2. **Undo/Redo Functionality (Bhagya Patel)**
-   - Undo any game action (play card, draw card, end turn)
-   - Redo previously undone actions
-   - Multiple levels of undo/redo using Stack data structures
-   - Visual feedback with enabled/disabled buttons
-   - State management and restoration
+Developed the `getPath()` method in `GameView.java` (lines 202-221):
+```java
+private String getPath(Card c) {
+    String resourcePath = "";
+    Card.Value value = c.getValue();
+    Card.Color color = c.getColor();
+    Card.Side side = c.getCurrentSide();
 
-3. **Replay Functionality (Nicky Fang)**
-   - Play again after game completion
-   - Reset all player scores to 0
-   - Start new round with same players
-   - Prompt dialog after game win
-   - Seamless transition to new game
+    if (side == Card.Side.LIGHT) {
+        resourcePath = "view/unoCards/";
+    } else {
+        resourcePath = "view/DarkSideCards/";
+    }
 
-4. **Comprehensive Testing (Faris Hassan)**
-   - JUnit test suite for serialization
-   - JUnit test suite for undo/redo functionality
-   - Edge case testing
-   - Validation of save/load integrity
+    if (value == Card.Value.WILD || value == Card.Value.WILD_DRAW_TWO || 
+        value == Card.Value.WILD_DRAW_COLOR) {
+        resourcePath += value + "/" + value + ".png";
+    } else {
+        resourcePath += value + "/" + color + ".png";
+    }
 
-5. **Documentation (Faris Hassan)**
-   - UML class diagrams
-   - Sequence diagrams
-   - Technical documentation
-   - Architecture documentation
-
----
-
-## Project Structure
-
-```
-uno-project/
-│
-├── src/
-│   ├── controller/
-│   │   ├── GameController.java       # Main controller, handles user input
-│   │   ├── GameModelListener.java    # Observer interface
-│   │   └── GameState.java            # Immutable game state snapshot
-│   │
-│   ├── model/
-│   │   ├── GameModel.java            # Core game logic
-│   │   ├── Player.java               # Player class
-│   │   ├── AIPlayer.java             # AI player with strategy
-│   │   ├── Card.java                 # Card representation
-│   │   └── Deck.java                 # Deck management
-│   │
-│   ├── view/
-│   │   ├── GameView.java             # GUI implementation
-│   │   ├── unoCards/                 # Light side card images
-│   │   └── DarkSideCards/            # Dark side card images
-│   │
-│   └── test/
-│       ├── SerializationTest.java    # Serialization JUnit tests
-│       └── UndoRedoTest.java         # Undo/Redo JUnit tests
-│
-├── docs/
-│   ├── UserManual.md                 # Comprehensive user guide
-│   ├── DataStructureChanges.md       # Documentation of UML and data structure changes
-│   ├── ClassDiagram.puml             # PlantUML class diagram
-│   ├── UndoSequence.puml             # Undo sequence diagram
-│   └── LoadSequence.puml             # Load game sequence diagram
-│
-├── UNO.jar                           # Runnable JAR file
-├── README.md                         # This file
-└── uno_save.dat                      # Save file (generated during gameplay)
+    return resourcePath;
+}
 ```
 
----
-
-## Deliverables Explanation
-
-### 1. UML Class Diagrams (Faris Hassan)
-- **Location**: `docs/ClassDiagram.puml`
-- **Description**: Complete class diagram showing all classes, interfaces, relationships, and method signatures
-- **Format**: PlantUML code (paste into PlantUML editor to generate diagram)
-- **Included**: All packages (controller, model, view), enums, and complete method signatures
-
-### 2. Sequence Diagrams (Faris Hassan)
-
-#### a) Undo Move Sequence Diagram
-- **Location**: `docs/UndoSequence.puml`
-- **Description**: Shows the complete flow when a player undoes a move
-- **Key Interactions**: User → View → Controller → Model → Stacks
-- **Highlights**: State saving to redo stack, state restoration, UI updates
-
-#### b) Load Saved Game Sequence Diagram
-- **Location**: `docs/LoadSequence.puml`
-- **Description**: Shows the deserialization and restoration process
-- **Key Interactions**: File system interaction, object deserialization, error handling
-- **Highlights**: Listener management, state restoration, AI turn processing
-
-### 3. Data Structure Changes Documentation (Faris Hassan)
-- **Location**: `docs/DataStructureChanges.md`
-- **Description**: Detailed explanation of all changes from Milestone 3 to Milestone 4
-- **Includes**:
-  - Serialization additions and implementation details
-  - New methods for save/load
-  - Undo/redo data structures (Stack implementation)
-  - Deep copy strategies
-  - Replay functionality additions
-  - Rationale for all design decisions
-
-### 4. User Manual
-- **Location**: `docs/UserManual.md`
-- **Description**: Complete guide for end users
-- **Sections**:
-  - Installation and setup
-  - How to play
-  - Feature explanations (Save/Load, Undo/Redo, Replay)
-  - Card types and rules
-  - Strategy tips
-
-### 5. README File
-- **Location**: This file (`README.md`)
-- **Contents**: Project overview, team contributions (all milestones), deliverables guide
+**Key Features**:
+- Automatically determines the correct directory based on the card's current side (Light vs. Dark)
+- Handles special cases for wild cards (which don't have color-specific images)
+- Constructs paths dynamically based on card properties
+- Supports both standard UNO cards and UNO Flip expansion cards
 
 ---
 
-### Running the JAR File
+### **Nicky Fang (101304731) - Image Rendering & Scaling**
 
-**Method 1: Double-Click**
-```
-Navigate to the folder and double-click UNO.jar
+**Contribution**: Nicky implemented the image loading and rendering system that converts resource files into displayable ImageIcons with proper scaling.
+
+**Implementation Details**:
+
+Developed the `getIcon()` method in `GameView.java` (lines 223-245):
+```java
+private ImageIcon getIcon(Card c, int x, int y) {
+    ClassLoader classLoader = getClass().getClassLoader();
+    String resourcePath = getPath(c);
+
+    System.out.println("Trying to load: " + resourcePath);
+
+    InputStream is = classLoader.getResourceAsStream(resourcePath);
+
+    if (is != null) {
+        ImageIcon icon = null;
+        try {
+            icon = new ImageIcon(ImageIO.read(is));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Image image = icon.getImage();
+        return new ImageIcon(image.getScaledInstance(x, y, Image.SCALE_SMOOTH));
+    }
+
+    return null;
+}
 ```
 
-**Method 2: Command Line**
-```bash
-java -jar UNO.jar
+**Key Features**:
+- Uses ClassLoader to access resources from the compiled JAR or project structure
+- Reads image files as InputStreams for flexible resource loading
+- Scales images to specified dimensions (80x120 for hand cards, 160x240 for top discard card)
+- Uses `Image.SCALE_SMOOTH` for high-quality image scaling
+- Includes error handling and debugging output for troubleshooting
+
+---
+
+### **Bhagya Patel (101324150) - Visual Feedback & UI Integration**
+
+**Contribution**: Bhagya implemented the visual feedback system that creates disabled card states and integrated the card images into the game's render loop.
+
+**Implementation Details**:
+
+1. **Disabled Icon Generation** - Developed the `getDisabledIcon()` method in `GameView.java` (lines 247-265):
+```java
+private ImageIcon getDisabledIcon(ImageIcon icon) {
+    Image image = icon.getImage();
+
+    BufferedImage buffered = new BufferedImage(
+            image.getWidth(null),
+            image.getHeight(null),
+            BufferedImage.TYPE_INT_ARGB
+    );
+
+    Graphics2D g = buffered.createGraphics();
+
+    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+    g.drawImage(image, 0, 0, null);
+
+    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+    g.setColor(new Color(200, 200, 200));
+    g.fillRect(0, 0, buffered.getWidth(), buffered.getHeight());
+    g.dispose();
+
+    return new ImageIcon(buffered);
+}
 ```
 
-### Game Setup
-1. Select number of players (2-4)
-2. Choose player types (Human or AI)
-3. Select AI difficulty (Easy/Medium/Hard)
-4. Click OK to start the game
+**Key Features**:
+- Creates a semi-transparent gray overlay for unplayable cards
+- Uses alpha compositing to maintain card visibility while indicating unavailability
+- Applies a 70% opacity to the original image and a 30% gray overlay
+
+2. **UI Integration** - Enhanced the `render()` method (lines 267-332) to incorporate card images:
+```java
+// Set card icons for buttons
+cardBtn.setIcon(getIcon(c, 80, 120));
+cardBtn.setDisabledIcon(getDisabledIcon(Objects.requireNonNull(getIcon(c, 80, 120))));
+
+// Add green border for playable cards
+if (playable) cardBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+
+// Display top discard card
+topCardText.setIcon(getIcon(s.topDiscard, 160, 240));
+```
+
+**Key Features**:
+- Dynamically renders all cards in player's hand with appropriate images
+- Highlights playable cards with a green border
+- Shows the top discard card at a larger scale (160x240)
+- Automatically disables card buttons for AI players or after turn is taken
+- Ensures visual consistency across different game states
 
 ---
 
-## How to Use Key Features
+## Technical Highlights
 
-### Save Game (Ivan Arkhipov)
-1. Click the **"Save Game"** button at any time during gameplay
-2. Game state is serialized to `uno_save.dat` in the same directory as the JAR
-3. Confirmation message appears: "Game saved successfully!"
-4. All game data is preserved including undo/redo history
+1. **Resource Management**: All images are loaded using Java's ClassLoader, making the application portable and compatible with JAR packaging
 
-### Load Game (Ivan Arkhipov)
-1. Click the **"Load Game"** button
-2. Game deserializes from `uno_save.dat`
-3. Continue playing from where you left off
-4. **Note**: Must have same number of players as saved game
+2. **Scalability**: The system supports all UNO card types:
+   - 76 numbered cards (0-9 in 4 colors, with duplicates)
+   - 24 action cards (Skip, Reverse, Draw One in 4 colors)
+   - 8 wild cards (Wild, Wild Draw Two)
+   - UNO Flip cards (both Light and Dark sides)
 
-### Undo Move (Bhagya Patel)
-1. Click the **"Undo"** button (located above your hand, left side)
-2. Game reverts to previous state
-3. Current state is pushed to redo stack
-4. Can undo multiple times
-5. Button is disabled when undo stack is empty
+3. **Performance**: Images are loaded on-demand during rendering, with efficient scaling algorithms
 
-### Redo Move (Bhagya Patel)
-1. After undoing, click the **"Redo"** button (located above your hand, right side)
-2. Game restores the undone action
-3. Can redo multiple times
-4. Making a new move clears redo history
-5. Button is disabled when redo stack is empty
-
-### Replay Game (Nicky Fang)
-1. After a player reaches 500 points, a dialog appears
-2. Shows the winner and their final score
-3. Choose "Yes" to play again with same players
-4. All scores reset to 0
-5. New round begins automatically
-6. Choose "No" to exit the game
+4. **User Experience**: Visual feedback clearly indicates which cards are playable, improving game usability
 
 ---
 
-## Technical Details
+## Testing & Validation
 
-### Design Patterns Used
-
-1. **Model-View-Controller (MVC)**
-   - Model: Game logic and state (Bhagya Patel)
-   - View: GUI components (Ivan Arkhipov)
-   - Controller: Mediates between Model and View (Nicky Fang)
-
-2. **Observer Pattern**
-   - `GameModelListener` interface
-   - Model notifies listeners of state changes
-   - Controller observes model events
-
-3. **Memento Pattern**
-   - `GameState` acts as memento
-   - Stores complete game state
-   - Used for undo/redo functionality (Bhagya Patel)
-
-4. **Serialization Pattern**
-   - Save/Load implementation (Ivan Arkhipov)
-   - Object persistence
-   - File I/O operations
-
-### Serialization Strategy (Ivan Arkhipov)
-
-**Serializable Classes**:
-- `Player`, `AIPlayer`
-- `Card`, `Deck`
-- `GameState`
-
-**Transient Fields**:
-- `Random random` in AIPlayer (reinitialized after deserialization)
-- `List<GameModelListener> listeners` in GameModel (not serialized)
-
-**Deep Copy Approach**:
-- `getState()` creates complete deep copies
-- Prevents reference sharing between states
-- Ensures undo/redo integrity
-
-### Undo/Redo Implementation (Bhagya Patel)
-
-**Data Structures**:
-- `Stack<GameState> undoStack` - stores previous states
-- `Stack<GameState> redoStack` - stores undone states
-
-**Algorithm**:
-- `saveStateOnMove()` - called before any game action
-- `undo()` - pops from undoStack, pushes current to redoStack
-- `redo()` - pops from redoStack, pushes current to undoStack
-- `restoreState()` - applies saved state to current game
-
-### Replay Implementation (Nicky Fang)
-
-**Components**:
-- `restartGame()` - resets scores and starts new round
-- `promptPlayAgain()` - dialog to continue or exit
-- `onGameWon()` - triggers replay prompt
-
-## Documentation Files
-
-1. **UserManual.md** - Complete guide for end users
-2. **DataStructureChanges.md** - Technical documentation of changes
-3. **README.md** - This file
+The team collectively tested the image system by:
+- Verifying all 112+ cards display correctly
+- Testing both Light and Dark side rendering during FLIP card plays
+- Ensuring proper scaling at different sizes
+- Validating disabled states for unplayable cards
+- Confirming resource loading works in both IDE and JAR execution
 
 ---
 
-## Version History
+## Conclusion
 
-- **v4.0 (Milestone 4)** - Save/Load, Undo/Redo, Replay, Testing
-- **v3.0 (Milestone 3)** - AI Players, UNO FLIP mechanics
-- **v2.0 (Milestone 2)** - Full MVC implementation, GUI
-- **v1.0 (Milestone 1)** - Basic game logic, console version
+This implementation demonstrates our team's ability to enhance the user experience through visual design while maintaining clean, modular code. Each team member contributed a critical component that, when integrated, created a polished and professional-looking card game interface.
 
 ---
 
-## License
+## Authors
 
-This project is submitted as academic coursework for SYSC 3110. All rights reserved by the team members.
+- **Faris Hassan** - 101300683
+- **Ivan Arkhipov** - 101310636
+- **Nicky Fang** - 101304731
+- **Bhagya Patel** - 101324150
 
----
+**Course**: SYSC 3110 - Software Development Project  
+**Milestone**: 5 (Bonus Feature)  
+**Date**: December 2024
